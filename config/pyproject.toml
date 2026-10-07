@@ -1,0 +1,33 @@
+[project]
+name = "sys-bench-amd-system-stress-stability-ubu2604"
+version = "0.9.0"
+description = "Generated GPU/sys-bench workload repository (sys-bench-amd-system-stress-stability-ubu2604)"
+readme = { text = "Workload repository tooling configuration." }
+requires-python = ">=3.12"
+license = { text = "MIT" }
+authors = [{ name = "Gary Bass" }]
+dependencies = [
+    "jsonschema",
+    "openpyxl",
+    "PyYAML",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = []
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
