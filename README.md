@@ -1,7 +1,7 @@
 # CPU + System Stress (Baseline Health) Benchmark
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![CI](https://img.shields.io/badge/CI-host--safe-green.svg)](.github/workflows/ci.yml)
+[![CI](https://github.com/garys-gpu-benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604/actions/workflows/ci.yml/badge.svg)](https://github.com/garys-gpu-benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604/actions/workflows/ci.yml)
 
 Target: Ubuntu 26.04 · AMD · see Hardware Requirements. This is a host benchmark, not a laptop `pip install` project.
 
@@ -147,6 +147,7 @@ Primary target is AMD ROCm. NVIDIA notes in this section are reference only and 
 ├── setup.sh
 ├── run_benchmark.sh
 ├── benchmark_specification.json
+├── .github/workflows/      # thin CI callers (see Continuous Integration)
 ├── config/
 ├── scripts/
 ├── src/
@@ -154,4 +155,23 @@ Primary target is AMD ROCm. NVIDIA notes in this section are reference only and 
 ├── docs/
 ├── results/
 └── LICENSE
+```
+
+## Continuous Integration
+
+| Workflow | Runs on | When | What it does |
+|---|---|---|---|
+| [CI](.github/workflows/ci.yml) | GitHub-hosted runner | every pull request, and every push to `main` | shellcheck, ruff, `bash -n`, `compileall`, `run_benchmark.sh --help`, specification schema, the results validator on a seeded fixture, required files, and actionlint. No GPU and no benchmark run. |
+| [GPU Smoke Benchmark](.github/workflows/gpu-smoke.yml) | self-hosted runner labeled `gpu`, `amd`, `ubu2604` | only when started by hand: **Actions → GPU Smoke Benchmark → Run workflow** (choose `smoke`, `baseline` or `extended`) | Verifies the pre-provisioned GPU stack, records `results/environment.json` (driver, runtime, kernel, GPU), runs the profile with `--validate`, shows headline metrics on the run page, and uploads the results. |
+
+Both files are short callers. The steps themselves live once, for every workload in the suite, in [`garys-gpu-benchmarks/shared-workflows`](https://github.com/garys-gpu-benchmarks/shared-workflows), pinned at `@v1`. The GPU workflow is never triggered by pull requests, so code from a fork cannot run on the GPU host.
+
+### Running it as part of the AMD Ubuntu 26.04 bundle
+
+This repository is one of the 32 workloads in [`bundle-amd-ubuntu-2604`](https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604), which holds them as git submodules. To put the whole bundle on a GPU host and run this workload from it:
+
+```bash
+git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604 /opt/benchmarks
+cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604
+bash run_benchmark.sh --profile smoke --validate
 ```
