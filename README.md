@@ -26,15 +26,28 @@ flowchart LR
 
 ## Download as a Bundle
 
-This repository is one of the 32 workloads in the AMD Ubuntu 26.04 bundle, [`bundle-amd-ubuntu-2604`](https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604), which holds them as git submodules pinned to a release. To put every workload for this platform on a GPU host in one step:
+This repository is one of the 32 workloads in the AMD Ubuntu 26.04 bundle, [`bundle-amd-ubuntu-2604`](https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604), which holds them as git submodules pinned to a release. To put every workload for this platform on a GPU host in one step, run this as root (or put `sudo` in front of the `apt-get` and `git clone` commands):
 
 ```bash
-git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604 /opt/benchmarks
-cd /opt/benchmarks
-./run.sh list                                   # every workload should show "ready"
-cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604
-bash run_benchmark.sh --profile smoke --validate
+apt-get update && apt-get install -y git
+git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604 /opt/benchmarks \
+  && cd /opt/benchmarks \
+  && ./run.sh list \
+  && cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604 \
+  && bash run_benchmark.sh --profile smoke --validate \
+  && cd /opt/benchmarks \
+  && echo "Done: 32 workloads in /opt/benchmarks; 303-sys-bench-amd-system-stress-stability-ubu2604 smoke run passed. Next: ./run_benchmark_suite.sh --help"
 ```
+
+Every line in `./run.sh list` should show `ready`. The commands are joined with `&&`, so if the clone or the smoke run fails, the chain stops there, and the closing message appears only when everything succeeded. The chain ends in `/opt/benchmarks`, where the suite runner is. For more extensive testing:
+
+```bash
+./run_benchmark_suite.sh -p smoke                 # smoke test of all 32 workloads
+./run_benchmark_suite.sh -w 307 -p baseline       # workload 307, baseline profile
+./run_benchmark_suite.sh --help                   # all options
+```
+
+A workload that is not set up yet sets itself up on its first run (its `run_benchmark.sh` calls `scripts/ensure_setup.sh`). See [Suite Tools](#suite-tools) for more.
 
 To move to the newest published release later: `cd /opt/benchmarks && git pull && git submodule update --init --recursive`.
 
@@ -47,7 +60,7 @@ To move to the newest published release later: `cd /opt/benchmarks && git pull &
 
 ## Suite Tools
 
-Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://github.com/garys-gpu-benchmarks/gpu-bench-suite) work across the whole bundle. `run_benchmark_suite.sh` is also at the top of every bundle; each script prints full usage with `--help`.
+Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://github.com/garys-gpu-benchmarks/gpu-bench-suite) work across the whole bundle. `run_benchmark_suite.sh` and `show_metrics.sh` are also at the top of every bundle (and the generator's remote copy installs `show_metrics.sh` at `/opt/benchmarks`); each script prints full usage with `--help`.
 
 - **`run_benchmark_suite.sh`** (on the GPU host) — runs the installed workloads one after another for each profile, writes one log to `/opt/benchmarks/benchmark_suite_log/`, and ends with a pass/fail summary.
   ```bash
@@ -63,8 +76,9 @@ Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://git
   ./scripts/get_remote_info.sh 203.0.113.10                     # root@host, port 22
   ./scripts/get_remote_info.sh -i ~/.ssh/id_ed25519 -o ~/results ubuntu@203.0.113.10 2222
   ```
-- **`show_metrics.sh`** (laptop or GPU host) — prints one workload's runs from the runtime ledger in fixed-width metric columns with per-profile means.
+- **`show_metrics.sh`** (laptop or GPU host) — prints one workload's runs from the runtime ledger in fixed-width metric columns with per-profile means. On the GPU host it is `/opt/benchmarks/show_metrics.sh`.
   ```bash
+  cd /opt/benchmarks && ./show_metrics.sh 303             # on the GPU host
   ./scripts/show_metrics.sh 303 --host 203.0.113.10            # over SSH, all profiles
   ./scripts/show_metrics.sh 303 --baseline --file RUNTIME_LEDGERS/<ledger>.csv
   ```
