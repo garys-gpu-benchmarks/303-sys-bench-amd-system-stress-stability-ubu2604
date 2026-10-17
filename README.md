@@ -17,7 +17,7 @@ Results are written to `results/benchmark.db` and `results/summary.json`.
 
 This workload is executed on the validation host after the repository is copied there. `setup.sh` and `run_benchmark.sh` do not open an outbound SSH session.
 
-Prerequisites: Ubuntu 26.04; AMD; Python 3.14.4; root or sudo for `setup.sh`. Framework: Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi. This is a host benchmark, not a laptop `pip install` project.
+Prerequisites: Ubuntu 26.04; AMD; Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only; root or sudo for `setup.sh`. Framework: Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi. This is a host benchmark, not a laptop `pip install` project.
 
 ```mermaid
 flowchart LR
@@ -109,7 +109,7 @@ Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_thre
 - OS: Ubuntu 26.04
 - GPU vendor: AMD
 - Framework family: Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
-- Python: Python 3.14.4
+- Python: Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only
 
 ### Reference validation environment
 
@@ -129,9 +129,9 @@ Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
 |---|---|
 | OS | Ubuntu 26.04 |
 | Kernel | kernel 7.0.0 |
-| Python | Python 3.14.4 |
-| ROCm | ROCm 7.14 |
-| rocBLAS | rocBLAS 5.2.0 |
+| Python | Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only |
+| ROCm | ROCm 10.1.0 |
+| rocBLAS | rocBLAS 5.7.0 |
 
 Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 

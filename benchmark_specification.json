@@ -15,6 +15,11 @@
     "value": "AMD"
   },
   {
+    "field_name": "OS Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Ubuntu 26.04"
+  },
+  {
     "field_name": "Repo Name",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "sys-bench-amd-system-stress-stability-ubu2604"
@@ -140,11 +145,6 @@
     "value": "Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi"
   },
   {
-    "field_name": "OS Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Ubuntu 26.04"
-  },
-  {
     "field_name": "Kernel Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "kernel 7.0.0"
@@ -162,17 +162,17 @@
   {
     "field_name": "Python Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Python 3.14.4"
+    "value": "Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only"
   },
   {
     "field_name": "GPU Runtime Version (was ROCm Version)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "ROCm 7.14"
+    "value": "ROCm 10.1.0"
   },
   {
     "field_name": "BLAS Version (was rocBLAS version)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "rocBLAS 5.2.0"
+    "value": "rocBLAS 5.7.0"
   },
   {
     "field_name": "Mistral-7B Version",
@@ -337,7 +337,7 @@
   {
     "field_name": "System Monitoring Tool",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "rocm-smi"
+    "value": "amd-smi"
   },
   {
     "field_name": "Validation & Diagnostics Suite",
@@ -377,12 +377,12 @@
   {
     "field_name": "ROCm Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "ROCm 7.14"
+    "value": "ROCm 10.1.0"
   },
   {
     "field_name": "rocBLAS Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "rocBLAS 5.2.0"
+    "value": "rocBLAS 5.7.0"
   },
   {
     "field_name": "Execution Summary (Run and Measure)",
