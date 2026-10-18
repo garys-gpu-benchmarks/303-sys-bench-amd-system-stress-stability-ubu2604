@@ -37,27 +37,27 @@
   {
     "field_name": "Metrics",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "#1: Peak GPU junction temperature (peak_gpu_junction_temp_c); #2: Sustained GPU power (sustained_gpu_power_w); #3: GPU ECC error count (gpu_system_ecc_error_count); #4: Thermal throttle events (thermal_throttle_event_count)"
+    "value": "#1: Peak GPU junction temperature (peak_gpu_junction_temp_c); #2: Sustained GPU power (sustained_gpu_power_w); #3: Uncorrectable ECC errors, RAS counter delta (ras_uncorrectable_ecc_delta_count); #4: Thermal throttle events (thermal_throttle_event_count)"
   },
   {
     "field_name": "Command Tools Executed",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average"
+    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
   },
   {
     "field_name": "Command Execution Details and Purpose",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling rocm-smi/amd-smi each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Command Methodology",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from rocm-smi, amd-smi, and sysfs once per second. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs once per second. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Execution Description With Parameters",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started. output_format: csv"
+    "value": "Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started. output_format: csv"
   },
   {
     "field_name": "Execution Domain",
@@ -97,7 +97,7 @@
   {
     "field_name": "Raw Output Example",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,gpu_system_ecc_error_count\n0,0,0,45,75,0,45,75,0,0"
+    "value": "sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count\n0,0,0,45,75,0,45,75,0,0"
   },
   {
     "field_name": "run_benchmark Command Plus Options for Smoke Run",
@@ -117,7 +117,7 @@
   {
     "field_name": "Output Fields / Metrics to Parse",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "gpu_util_pct, gpu_temp_c, gpu_power_w, ecc_uncorrected, peak_gpu_junction_temp_c, sustained_gpu_power_w, thermal_throttle_event_count, gpu_system_ecc_error_count"
+    "value": "gpu_util_pct, gpu_temp_c, gpu_power_w, ecc_uncorrected, peak_gpu_junction_temp_c, sustained_gpu_power_w, thermal_throttle_event_count, ras_uncorrectable_ecc_delta_count"
   },
   {
     "field_name": "Success Criteria",
@@ -127,7 +127,7 @@
   {
     "field_name": "Parser and Normalization Notes",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "The CSV has no CPU utilization or CPU temperature columns. gpu_system_ecc_error_count is the uncorrectable delta from the last sample minus the first, copied onto every row. A RAS table that names the columns and yields no counts is na (RAS table not parsed)"
+    "value": "The CSV has no CPU utilization or CPU temperature columns. ras_uncorrectable_ecc_delta_count is the uncorrectable delta from the last sample minus the first, copied onto every row. A RAS table that names the columns and yields no counts is na (RAS table not parsed). When amd-smi prints no throttle or violation counter, thermal_throttle_event_count is na (expected: throttle counter not exposed), which publishes as N/A-EXPECTED"
   },
   {
     "field_name": "Hardware Config",
@@ -142,7 +142,7 @@
   {
     "field_name": "Framework",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi"
+    "value": "Bash, SQLite, Python, PyYAML, stress-ng, amd-smi"
   },
   {
     "field_name": "Kernel Version",
@@ -162,7 +162,7 @@
   {
     "field_name": "Python Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only"
+    "value": "Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only"
   },
   {
     "field_name": "GPU Runtime Version (was ROCm Version)",
@@ -217,7 +217,7 @@
   {
     "field_name": "g++ Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - CMake not used"
+    "value": "N/A - g++ not used"
   },
   {
     "field_name": "Known Runtime Constraints (<=35 Words Each)",
@@ -362,17 +362,17 @@
   {
     "field_name": "Schema Last Updated",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "2026-09-05"
+    "value": "2026-10-17"
   },
   {
     "field_name": "Installation and Execution Summary",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling rocm-smi/amd-smi each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Workload Command Line Executable",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average"
+    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
   },
   {
     "field_name": "ROCm Version",
@@ -387,7 +387,7 @@
   {
     "field_name": "Execution Summary (Run and Measure)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling rocm-smi/amd-smi each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "nVidia Porting Instructions (Reference Only)",
@@ -407,7 +407,7 @@
   {
     "field_name": "Profile Parameter Values",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Parameters_SmokeBaselineExtend",
-    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\", \"notes\": \"\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"temp_threshold\": {\"smoke\": \"75\", \"baseline\": \"75\", \"extended\": \"75\", \"notes\": \"\"}, \"power_threshold\": {\"smoke\": \"500\", \"baseline\": \"500\", \"extended\": \"500\", \"notes\": \"\"}, \"throttle_check\": {\"smoke\": \"true\", \"baseline\": \"true\", \"extended\": \"true\", \"notes\": \"\"}, \"ecc_check\": {\"smoke\": \"true\", \"baseline\": \"true\", \"extended\": \"true\", \"notes\": \"\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\", \"notes\": \"VM 2026-08-16 duration=200 -> 205s (3:25). Extended 580 extrapolated ~9:50, not tested.\"}, \"output_format\": {\"smoke\": \"csv\", \"baseline\": \"csv\", \"extended\": \"csv\", \"notes\": \"\"}}"
+    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\", \"notes\": \"\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"temp_threshold\": {\"smoke\": \"100\", \"baseline\": \"100\", \"extended\": \"100\", \"notes\": \"\"}, \"power_threshold\": {\"smoke\": \"1000\", \"baseline\": \"1000\", \"extended\": \"1000\", \"notes\": \"\"}, \"throttle_check\": {\"smoke\": \"true\", \"baseline\": \"true\", \"extended\": \"true\", \"notes\": \"\"}, \"ecc_check\": {\"smoke\": \"true\", \"baseline\": \"true\", \"extended\": \"true\", \"notes\": \"\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\", \"notes\": \"VM 2026-08-16 duration=200 -> 205s (3:25). Extended 580 extrapolated ~9:50, not tested.\"}, \"output_format\": {\"smoke\": \"csv\", \"baseline\": \"csv\", \"extended\": \"csv\", \"notes\": \"\"}}"
   },
   {
     "field_name": "Profile Command Authorship",

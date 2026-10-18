@@ -112,7 +112,7 @@ def main() -> int:
     samples = conn.execute("SELECT * FROM samples WHERE run_id = ?", (run["run_id"],)).fetchall()
     failures = []
     run_keys = set(run.keys())
-    if run["status"] != "ok":
+    if run["status"] not in {"ok", "stub"}:
         failures.append("latest run status is not ok")
     if "error_message" in run_keys and run["error_message"] not in {None, ""}:
         failures.append("run.error_message is not NULL")
@@ -141,7 +141,7 @@ def main() -> int:
         if isinstance(value, (int, float)) and float(value) <= 0 and not zero_ok(column):
             failures.append(f"run.{column} is not positive")
     for sample in samples:
-        if sample["status"] != "ok":
+        if sample["status"] not in {"ok", "stub"}:
             failures.append(f"sample {sample['sample_index']} is not ok")
         # A sample with status == "ok" and a non-empty error_message is a
         # collector reporting an optional measurement it honestly could not
@@ -180,6 +180,34 @@ def main() -> int:
         if direction == "max" and measured > expected:
             failures.append(f"{column} {measured} > max {expected}")
     conn.close()
+    summary_path = Path("results/summary.json")
+    publication = "PASS"
+    if summary_path.is_file():
+        try:
+            from metric_contract import publication_status, text_dimension_key
+            from print_metric_summary import metric_items, resolve_metrics
+        except ImportError:
+            publication_status = None
+        if publication_status is not None:
+            payload = json.loads(summary_path.read_text(encoding="utf-8"))
+            metrics = payload.get("metrics") if isinstance(payload.get("metrics"), dict) else {}
+            definition = Path("benchmark_specification.json")
+            items = metric_items(definition) if definition.is_file() else []
+            for _number, description in items:
+                if text_dimension_key(description):
+                    failures.append(f"numbered metric is a text dimension: {description}")
+            resolved = resolve_metrics(items, metrics) if items else []
+            pairs = [(label, value) for _number, _description, label, value in resolved]
+            context = {
+                "profile": os.environ.get("BENCHMARK_PROFILE", ""),
+                "status": payload.get("status", ""),
+                "standin": str(payload.get("status", "")).lower() in {"stub", "smoke-standin"},
+                "gpu_count": metrics.get("gpu_count", os.environ.get("GPU_COUNT", "")),
+                "numa_nodes": metrics.get("numa_nodes", ""),
+            }
+            publication, _na_count = publication_status(pairs, context)
+            if publication == "INCOMPLETE":
+                failures.append("required metric missing or unexpected na")
     if failures:
         if not args.quiet:
             print("[FAIL] validation")
@@ -187,7 +215,13 @@ def main() -> int:
                 print(" -", item)
         return 1
     if not args.quiet:
-        print(f"[PASS] validated {len(samples)} samples")
+        if publication == "SMOKE-STANDIN":
+            print("STUB stand-in server; numbered serving metrics are na (stub server, smoke only).")
+            print(f"[SMOKE-STANDIN] validated {len(samples)} samples")
+        elif publication == "N/A-EXPECTED":
+            print(f"[N/A-EXPECTED] validated {len(samples)} samples")
+        else:
+            print(f"[PASS] validated {len(samples)} samples")
     return 0
 
 

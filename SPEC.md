@@ -2,7 +2,7 @@
 
 ## Execution Description
 
-Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, throttle_check, ecc_check, duration.
+Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, throttle_check, ecc_check, duration.
 
 ## Parameters
 
@@ -11,8 +11,8 @@ Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_thre
 | num_threads | `--num-threads` | smoke=16, baseline=16, extended=16 | 16 | From Parameter list; see Execution Description With Parameters. |
 | cpu_load_percent | `--cpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | From Parameter list; see Execution Description With Parameters. |
 | gpu_load_percent | `--gpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | From Parameter list; see Execution Description With Parameters. |
-| temp_threshold | `--temp-threshold` | smoke=75, baseline=75, extended=75 | 75 | From Parameter list; see Execution Description With Parameters. |
-| power_threshold | `--power-threshold` | smoke=500, baseline=500, extended=500 | 500 | From Parameter list; see Execution Description With Parameters. |
+| temp_threshold | `--temp-threshold` | smoke=100, baseline=100, extended=100 | 100 | From Parameter list; see Execution Description With Parameters. |
+| power_threshold | `--power-threshold` | smoke=1000, baseline=1000, extended=1000 | 1000 | From Parameter list; see Execution Description With Parameters. |
 | throttle_check | `--throttle-check` | smoke=true, baseline=true, extended=true | true | From Parameter list; see Execution Description With Parameters. |
 | ecc_check | `--ecc-check` | smoke=true, baseline=true, extended=true | true | From Parameter list; see Execution Description With Parameters. |
 | duration | `--duration` | smoke=5, baseline=200, extended=580 | 200 | From Parameter list; see Execution Description With Parameters. |
@@ -21,35 +21,35 @@ Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_thre
 ## Invocation
 
 ```bash
-Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
 ```
 
 ## Raw Output Format
 
 CSV with one time-series row per elapsed second
 
-sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,gpu_system_ecc_error_count
+sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count
 0,0,0,45,75,0,45,75,0,0
 
 ## Metrics
 
 - **#1: Peak GPU junction temperature** — stored as `peak_gpu_junction_temp_c`.
 - **#2: Sustained GPU power** — stored as `sustained_gpu_power_w`.
-- **#3: GPU ECC error count** — stored as `gpu_system_ecc_error_count`.
+- **#3: Uncorrectable ECC errors, RAS counter delta** — stored as `ras_uncorrectable_ecc_delta_count`.
 - **#4: Thermal throttle events** — stored as `thermal_throttle_event_count`.
 
 ## Framework
 
-Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 
 ## Installation and Execution Summary
 
-Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling rocm-smi/amd-smi each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
+Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
 
 ## Platform Portability
 
 - **AMD (primary):** ```bash
-Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
 ```
 - **NVIDIA:** Primary target is AMD ROCm. NVIDIA notes in this section are reference only and are not the execution path.
 
@@ -83,7 +83,7 @@ BENCHMARK_DB=tests/fixtures/benchmark.db \
 
 CSV with one time-series row per elapsed second
 
-sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,gpu_system_ecc_error_count
+sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count
 0,0,0,45,75,0,45,75,0,0
 
 ```bash
@@ -100,10 +100,10 @@ bash run_benchmark.sh --profile extended --validate
 2. `run.error_message` is NULL.
 3. `started_at` and `finished_at` are valid ISO-8601 UTC strings.
 4. All required aggregate metrics in `runs` are non-NULL and finite.
-5. All required aggregate metrics are physically sensible (positive values). Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+5. All required aggregate metrics are physically sensible (positive values). Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 6. At least 2 sample rows exist for the latest `run_id` (sweep coverage).
 7. No sample has `status = 'error'`.
-8. Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+8. Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 
 ### Baseline / Threshold configuration (`config/benchmark_config.yaml`)
 

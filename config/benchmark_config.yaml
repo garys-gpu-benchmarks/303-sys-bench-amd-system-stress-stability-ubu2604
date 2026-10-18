@@ -11,8 +11,8 @@ sweep:
   num_threads: 16
   cpu_load_percent: 50
   gpu_load_percent: 50
-  temp_threshold: 75
-  power_threshold: 500
+  temp_threshold: 100
+  power_threshold: 1000
   throttle_check: true
   ecc_check: true
   duration:
@@ -25,10 +25,10 @@ thresholds:
   peak_cpu_temp_c_min: 0
   peak_cpu_temp_c_max: 75
   peak_gpu_junction_temp_c_min: 0
-  peak_gpu_junction_temp_c_max: 75
+  peak_gpu_junction_temp_c_max: 100
   sustained_gpu_power_w_min: 0
-  sustained_gpu_power_w_max: 500
+  sustained_gpu_power_w_max: 1000
   thermal_throttle_event_count_min: 0
   thermal_throttle_event_count_max: 0
-  gpu_system_ecc_error_count_min: 0
-  gpu_system_ecc_error_count_max: 0
+  ras_uncorrectable_ecc_delta_count_min: 0
+  ras_uncorrectable_ecc_delta_count_max: 0

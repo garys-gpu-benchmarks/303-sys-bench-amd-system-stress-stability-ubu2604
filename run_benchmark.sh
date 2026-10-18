@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # File: run_benchmark.sh
-# Description: Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second.
+# Description: Runs CPU-only stress-ng while polling amd-smi metric once per second.
 # Execution: bash run_benchmark.sh [--profile smoke|baseline|extended] [--validate]
 # Options: --profile, --smoke, --baseline, --extended, --device, --phase, --raw-file, --config, --validate, --help
 # Requirements: bash, python3, repository-local .venv
@@ -18,7 +18,7 @@ usage() {
   cat <<'USAGE'
 Usage: bash run_benchmark.sh [OPTIONS]
 
-Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second.
+Runs CPU-only stress-ng while polling amd-smi metric once per second.
 
 Profiles:
   --profile <name>              Run profile: smoke|baseline|extended (default: smoke)

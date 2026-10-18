@@ -17,7 +17,7 @@ Results are written to `results/benchmark.db` and `results/summary.json`.
 
 This workload is executed on the validation host after the repository is copied there. `setup.sh` and `run_benchmark.sh` do not open an outbound SSH session.
 
-Prerequisites: Ubuntu 26.04; AMD; Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only; root or sudo for `setup.sh`. Framework: Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi. This is a host benchmark, not a laptop `pip install` project.
+Prerequisites: Ubuntu 26.04; AMD; Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only; root or sudo for `setup.sh`. Framework: Bash, SQLite, Python, PyYAML, stress-ng, amd-smi. This is a host benchmark, not a laptop `pip install` project.
 
 ```mermaid
 flowchart LR
@@ -32,14 +32,14 @@ This repository is one of the 32 workloads in the AMD Ubuntu 26.04 bundle, [`bun
 apt-get update && apt-get install -y git
 git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-amd-ubuntu-2604 /opt/benchmarks \
   && cd /opt/benchmarks \
-  && ./run.sh list \
+  && ./run_benchmark_suite.sh --list \
   && cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604 \
   && bash run_benchmark.sh --profile smoke --validate \
   && cd /opt/benchmarks \
   && echo "Done: 32 workloads in /opt/benchmarks; 303-sys-bench-amd-system-stress-stability-ubu2604 smoke run passed. Next: ./run_benchmark_suite.sh --help"
 ```
 
-Every line in `./run.sh list` should show `ready`. The commands are joined with `&&`, so if the clone or the smoke run fails, the chain stops there, and the closing message appears only when everything succeeded. The chain ends in `/opt/benchmarks`, where the suite runner is. For more extensive testing:
+Every line in `./run_benchmark_suite.sh --list` should show `ready`; it exits with an error if any workload is not fetched. The commands are joined with `&&`, so if the clone, the list or the smoke run fails, the chain stops there, and the closing message appears only when everything succeeded. The chain ends in `/opt/benchmarks`, where the suite runner is. For more extensive testing:
 
 ```bash
 ./run_benchmark_suite.sh -p smoke                 # smoke test of all 32 workloads
@@ -73,8 +73,8 @@ Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://git
 - **`get_remote_info.sh`** (on your laptop; Git Bash on Windows) — over one SSH connection, copies the runtime ledger and every workload's `results/raw`, `results/parsed` and suite logs into `RUNTIME_LEDGERS/` and `DIRECTORIES/`.
   ```bash
   git clone https://github.com/garys-gpu-benchmarks/gpu-bench-suite && cd gpu-bench-suite
-  ./scripts/get_remote_info.sh 203.0.113.10                     # root@host, port 22
-  ./scripts/get_remote_info.sh -i ~/.ssh/id_ed25519 -o ~/results ubuntu@203.0.113.10 2222
+  ./scripts/get_remote_info.sh --host 203.0.113.10              # root@host, port 22
+  ./scripts/get_remote_info.sh --host ubuntu@203.0.113.10 --port 2222 -i ~/.ssh/id_ed25519 -o ~/results
   ```
 - **`show_metrics.sh`** (laptop or GPU host) — prints one workload's runs from the runtime ledger in fixed-width metric columns with per-profile means. On the GPU host it is `/opt/benchmarks/show_metrics.sh`.
   ```bash
@@ -85,21 +85,21 @@ Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://git
 
 ## 1. Overview
 
-Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, throttle_check, ecc_check, duration.
+Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, throttle_check, ecc_check, duration.
 
 ## 2. What It Validates
 
 - Validates per-second telemetry during yaml duration. GPU GEMM load is not applied
 - #1: Peak GPU junction temperature (peak_gpu_junction_temp_c); is present and physically sensible.
 - #2: Sustained GPU power (sustained_gpu_power_w); is present and physically sensible.
-- #3: GPU ECC error count (gpu_system_ecc_error_count); is present and physically sensible.
+- #3: Uncorrectable ECC errors, RAS counter delta (ras_uncorrectable_ecc_delta_count); is present and physically sensible.
 - #4: Thermal throttle events (thermal_throttle_event_count) is present and physically sensible.
 
 ## 3. Metrics Captured
 
 - **#1: Peak GPU junction temperature** — stored as `peak_gpu_junction_temp_c`.
 - **#2: Sustained GPU power** — stored as `sustained_gpu_power_w`.
-- **#3: GPU ECC error count** — stored as `gpu_system_ecc_error_count`.
+- **#3: Uncorrectable ECC errors, RAS counter delta** — stored as `ras_uncorrectable_ecc_delta_count`.
 - **#4: Thermal throttle events** — stored as `thermal_throttle_event_count`.
 
 ## 4. Hardware Requirements
@@ -108,8 +108,8 @@ Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_thre
 
 - OS: Ubuntu 26.04
 - GPU vendor: AMD
-- Framework family: Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
-- Python: Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only
+- Framework family: Bash, SQLite, Python, PyYAML, stress-ng, amd-smi
+- Python: Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only
 
 ### Reference validation environment
 
@@ -117,11 +117,11 @@ The tables below describe the machine used to generate the reference results. Th
 
 ### System
 
-Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
+Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, amd-smi
 
 ### GPU
 
-Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
+Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, amd-smi
 
 ## 5. Software Requirements
 
@@ -129,22 +129,22 @@ Ubuntu 26.04 / AMD / Bash, SQLite, Python, PyYAML, stress-ng, rocm-smi, amd-smi
 |---|---|
 | OS | Ubuntu 26.04 |
 | Kernel | kernel 7.0.0 |
-| Python | Python 3.14.N (uv-managed; all benchmark venvs; same build as 24.04). System python3.14 retained for OS and setup scripts only |
+| Python | Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only |
 | ROCm | ROCm 10.1.0 |
 | rocBLAS | rocBLAS 5.7.0 |
 
-Runs CPU-only stress-ng while polling rocm-smi/amd-smi once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 
 ## 6. Installation
 
 ```bash
-Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
 ```
 
 ## 7. Running the Benchmark
 
 ```bash
-Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
 ```
 
 **Validating results separately:**
@@ -162,11 +162,11 @@ source ".venv/bin/activate"
 
 CSV with one time-series row per elapsed second
 
-sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,gpu_system_ecc_error_count
+sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count
 0,0,0,45,75,0,45,75,0,0
 
 ```bash
-Run stress-ng --cpu, rocm-smi and/or amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
 ```
 
 ### `results/summary.json`
@@ -177,7 +177,7 @@ Consolidated metrics from the most recent run — suitable for CI artifact uploa
 
 CSV with one time-series row per elapsed second
 
-sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,gpu_system_ecc_error_count
+sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count
 0,0,0,45,75,0,45,75,0,0
 
 ## 9. Baselines / Thresholds
