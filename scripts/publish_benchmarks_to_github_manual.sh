@@ -22,6 +22,26 @@ if grep -q $'\r' "$0"; then echo "This file has Windows (CRLF) line endings. Fix
 #                               get_remote_info.sh)
 #   the generator               ai-agent-gpu-benchmark-repo-generator
 #
+# Changes 2026-10-19 (lab-technician review of the v1.0.14 bundles):
+#   - Bundle .gitmodules no longer carry "branch = main", so
+#     "git submodule update --remote" cannot move a workload off its pinned
+#     release.
+#   - The bundle's copy of run_benchmark_suite.sh runs only the smoke profile
+#     when no -p is given, and its --help examples use that bundle's workload
+#     numbers (the shared script's examples name 101-132 in every bundle).
+#   - Bundle README: Getting started begins with x07 (STREAM, CPU only, no
+#     GPU install or restart), then x01, x02 and x14 (host-GPU copy at
+#     256 MiB) instead of x15, whose smoke arrays fit in GPU cache.
+#   - Bundle README: the first GPU command says it is quiet for 5-20 minutes while
+#     it installs, and how to watch it (--show-output or install_status.txt).
+#   - Bundle README: smoke is a wiring check, not a number to quote; the
+#     full run is an explicit -p smoke,baseline,extended; what to do after
+#     the install restarts the machine; results that are expected to be na;
+#     Hugging Face range x23-x32; how to see which release is installed.
+#   - Step 7 stops if the suite-script edits did not apply; step 8 also checks
+#     the test clone for a branch line, the smoke default, and that every
+#     ./script.sh the README names is in the bundle.
+#
 # Folder layout (one dated folder per publish run, holding a copy of this
 # script):
 #
@@ -321,7 +341,7 @@ add_submodule() {
     [[ -f .gitmodules ]] && git add .gitmodules >/dev/null 2>&1
     git config --remove-section "submodule.${path}" >/dev/null 2>&1
     rm -rf "${path}" ".git/modules/${path}"
-    git submodule add -q -b main --name "${path}" "../${dir}.git" "${path}" && return 0
+    git submodule add -q --name "${path}" "../${dir}.git" "${path}" && return 0
     ((i < 4)) && { echo "  (failed, cleaning up and trying again in 5 seconds)"; sleep 5; }
   done
   return 1
@@ -432,6 +452,33 @@ wait_self_test() {
 
 # Prints a bundle's README.md. $1 = platform digit (1-4), $2 = bundle name,
 # $3 = number of workloads, $4 = list of workload rows (Markdown).
+# Writes a bundle's copy of run_benchmark_suite.sh: stdin -> stdout.
+# $1 = platform digit (1-4). Two changes from the shared script:
+#   - with no -p it runs the smoke profile only, so a bare
+#     ./run_benchmark_suite.sh is a short check, not a many-hour run;
+#   - the --help examples and the bad-number message use this bundle's
+#     workload numbers (the shared script names 101-132 in every bundle).
+bundle_suite_script() {
+  local s=$1
+  tr -d '\r' | sed \
+    -e 's/^profiles_arg="smoke,baseline,extended"$/profiles_arg="smoke"/' \
+    -e 's/Default: smoke,baseline,extended$/Default: smoke   (full run: -p smoke,baseline,extended)/' \
+    -e "s/Examples: 101,107,121   301-310   101-105,120\$/Examples: ${s}01,${s}07,${s}21   ${s}01-${s}10   ${s}01-${s}05,${s}20/" \
+    -e 's/^\(  \.\/\${SCRIPT_NAME}  *\)# all workloads, all 3 profiles$/\1# all workloads, smoke profile (the default)/' \
+    -e 's/^  \.\/\${SCRIPT_NAME} -p smoke  *# quick check of everything$/  .\/${SCRIPT_NAME} -p smoke,baseline,extended   # everything, all 3 profiles (many hours)/' \
+    -e "/-w 101,107,121 -p baseline\\|-w 105 -p smoke\\|use numbers like 101/s/\\b1\\([0-3][0-9]\\)\\b/${s}\\1/g"
+}
+
+# Checks a bundle copy written by bundle_suite_script. $1 = file, $2 = digit.
+check_bundle_suite_script() {
+  local f=$1 s=$2
+  grep -qx 'profiles_arg="smoke"' "${f}" || { echo "the default profile is not smoke in ${f}"; return 1; }
+  grep -q "Default: smoke   (full run" "${f}" || { echo "the --help default line was not changed in ${f}"; return 1; }
+  grep -q -- "-w ${s}01,${s}07,${s}21 -p baseline" "${f}" || { echo "the --help examples do not use ${s}NN numbers in ${f}"; return 1; }
+  grep -q "all workloads, smoke profile (the default)" "${f}" || { echo "the bare-command example was not changed in ${f}"; return 1; }
+  bash -n "${f}" || { echo "${f} is not valid bash after the edits"; return 1; }
+}
+
 bundle_readme() {
   local s=$1 bundle=$2 want=$3 rows=$4 text
   local plat vendor stack os
@@ -454,10 +501,13 @@ Use this bundle only on that platform. The others have their own bundle:
 
 - A freshly installed **Ubuntu @OS@** machine with @VENDOR@ GPUs, connected to the internet.
 - **root** access: log in as root, or run `sudo -i` first.
-- Plenty of free disk space. Each benchmark installs its own software the first
-  time it runs, and checks for at least 20 GiB free before it does. The AI
-  benchmarks also download models.
-- For the AI model benchmarks (@S@23 to @S@31): if a model's license on Hugging
+- Plenty of free disk space. Each benchmark installs its own software (its own
+  Python environment) the first time it runs, and checks for at least 20 GiB
+  free before it does. That check is per benchmark, not for the whole suite,
+  and the AI benchmarks also download models.
+- A machine where installing @STACK@ and one restart are acceptable: the first
+  run installs them.
+- For the AI model benchmarks (@S@23 to @S@32): if a model's license on Hugging
   Face requires it, accept the license there and set a token first:
   `export HF_TOKEN=hf_...`
 
@@ -473,25 +523,53 @@ cd /opt/benchmarks
 `./run_benchmark_suite.sh --list` should show all @WANT@ benchmarks as `ready`.
 Do not use GitHub's **Download ZIP**: it leaves the benchmark folders empty.
 
-## Getting started: three quick benchmarks
+## Getting started
+
+### 1. A CPU benchmark (about a minute, no GPU software)
 
 ```bash
 cd /opt/benchmarks
-./run_benchmark_suite.sh -w @S@01,@S@02,@S@15 -p smoke
+./run_benchmark_suite.sh -w @S@07 -p smoke --show-output
 ```
 
-This runs the short `smoke` profile of three benchmarks:
+@S@07 is STREAM, CPU memory bandwidth. It installs only a compiler and its own
+Python environment, not @STACK@, and does not restart the machine. It ends
+with Copy, Scale, Add and Triad rates in GB/s. Smoke uses 4 threads; the
+`baseline` profile is the figure to quote for this machine. If this run
+passes, the bundle, the suite runner, the results and the runtime ledger all
+work.
+
+### 2. The GPU software and two quick GPU checks
+
+```bash
+./run_benchmark_suite.sh -w @S@01,@S@02,@S@14 -p smoke   # first run installs @STACK@: quiet for 5-20 minutes
+```
+
+The first GPU run prints nothing while it installs. To watch it, add
+`--show-output`, or in a second window run
+`tail -f /opt/benchmarks/@S@01-*/results/install_status.txt`.
 
 | Benchmark | What it checks |
 |---|---|
-| @S@01 | the GPU software stack is installed and working |
-| @S@02 | GPU health |
-| @S@15 | GPU memory (HBM) bandwidth |
+| @S@01 | installs @STACK@, then checks the installed GPU software (the long step) |
+| @S@02 | GPU health: the GPUs are visible, with temperature and link status |
+| @S@14 | copy bandwidth between the host and the GPU, measured at 256 MiB |
 
-The first run takes much longer than later ones: it installs @STACK@ and each
-benchmark's software. The install may restart the machine once. If it does,
-log in again after the restart, wait a few minutes for setup to finish on its
-own, and run the same command again.
+**Smoke is a wiring check.** It shows that each benchmark installs, runs and
+records its results. Most smoke runs use small sizes, so their numbers are not
+for reports: for example, the @S@15 (GPU memory bandwidth) smoke arrays fit in
+GPU cache and do not measure HBM. Quote `baseline` or `extended` results.
+
+The first GPU run takes much longer than later ones: @S@01 installs @STACK@,
+and each benchmark installs its own software the first time. The install may
+restart the machine once. If it does:
+
+1. Log in again as root. Setup continues on its own after the restart.
+2. To watch it: `tail -f /opt/benchmarks/@S@01-*/results/install_status.txt`
+   (Ctrl+C stops watching, not setup).
+3. Run the same command again. If it says setup is still running, wait a few
+   minutes and run it again. Benchmarks already installed are not installed
+   again.
 
 Each run prints a short block, and the suite ends with a pass/fail summary.
 The full output is in `/opt/benchmarks/benchmark_suite_log/`.
@@ -510,8 +588,8 @@ per run with its metrics, then the mean for each profile.
 
 ```bash
 cd /opt/benchmarks
-./show_metrics.sh @S@15                # benchmark @S@15, every profile
-./show_metrics.sh @S@15 --baseline     # baseline runs only
+./show_metrics.sh @S@07                # benchmark @S@07, every profile
+./show_metrics.sh @S@07 --baseline     # baseline runs only
 ./show_metrics.sh --help             # all options
 ```
 
@@ -525,11 +603,12 @@ It takes many hours.
 ```bash
 tmux new -s bench
 cd /opt/benchmarks
-./run_benchmark_suite.sh
+./run_benchmark_suite.sh -p smoke,baseline,extended
 ```
 
 This runs all @WANT@ benchmarks with the `smoke` profile, then all with
-`baseline`, then all with `extended`. Detach with **Ctrl+B** then **D**;
+`baseline`, then all with `extended`. Without `-p`, `./run_benchmark_suite.sh`
+runs the `smoke` profile only. Detach with **Ctrl+B** then **D**;
 reattach later with `tmux attach -t bench`.
 
 Run "Getting started" first on a new machine, so the one-time install (and any
@@ -537,7 +616,7 @@ restart) happens before the long run.
 
 | Option | What it does |
 |---|---|
-| `-p smoke` | profiles to run, in order (`smoke`, `baseline`, `extended`; comma-separated) |
+| `-p baseline` | profiles to run, in order (`smoke`, `baseline`, `extended`; comma-separated). Default: `smoke` |
 | `-w @S@01,@S@07,@S@21` | only these benchmarks; ranges work too: `-w @S@01-@S@10` |
 | `-r 20` | repeat the whole set 20 times (soak test) |
 | `--fail-fast` | stop at the first failed run |
@@ -545,6 +624,20 @@ restart) happens before the long run.
 | `--list` | list the benchmarks as `ready` or `not fetched`, then exit |
 | `-n` | show what would run, without running it |
 | `--help` | all options |
+
+## Results that are expected to be `na`
+
+A metric written as `na (reason)` was not measured on this machine; it is
+never an invented number. Read the reason before reporting a fault. These are
+expected:
+
+| Benchmark | Expected result |
+|---|---|
+| @S@16 | On a machine with one GPU, the bandwidth metrics are `na (requires at least two GPUs)` and the run still passes. |
+| @S@11 | Hardware counters are `na` with the reason when `perf` is not installed for the running kernel, or when `perf_event_paranoid` denies access. |
+| @S@06 | Measures a file (`data/fio_target.bin`) on the disk that holds the benchmark, not a raw NVMe device. |
+| @S@08 | Measures the loopback path (`127.0.0.1`), not a network card. |
+| @S@30, @S@31 | The `smoke` profile may use a stand-in server; only `baseline` and `extended` measure SGLang. |
 
 ## Results
 
@@ -555,6 +648,7 @@ restart) happens before the long run.
 | Each benchmark's results | `/opt/benchmarks/<benchmark>/results/` (`raw/` and `parsed/`) |
 | One line per run (time, exit code) | `/var/opt/benchmarks/runtime_ledger.csv` |
 | One benchmark's runs and per-profile means | `./show_metrics.sh <benchmark>` |
+| Which release is installed | `git -C /opt/benchmarks describe --tags` |
 
 To copy the ledger, every benchmark's `results/` and the suite logs to your
 laptop (Git Bash on Windows), use `get_remote_info.sh` from
@@ -564,7 +658,7 @@ laptop (Git Bash on Windows), use `get_remote_info.sh` from
 ```bash
 git clone https://github.com/@ORG@/gpu-bench-suite && cd gpu-bench-suite
 ./scripts/get_remote_info.sh --host 203.0.113.10       # this machine's address; --port PORT if ssh is not on 22
-./scripts/show_metrics.sh @S@15 --host 203.0.113.10      # the same table, read over ssh
+./scripts/show_metrics.sh @S@07 --host 203.0.113.10      # the same table, read over ssh
 ```
 
 ## Update to a newer release
@@ -573,6 +667,9 @@ git clone https://github.com/@ORG@/gpu-bench-suite && cd gpu-bench-suite
 cd /opt/benchmarks
 git pull && git submodule update --init --recursive
 ```
+
+Do not use `git submodule update --remote`: it moves the benchmarks off the
+release they were tested at.
 
 Copies made before v1.0.5 keep their benchmarks in a `benchmarks/` subfolder;
 delete those and clone again as shown under Install.
@@ -1070,10 +1167,20 @@ if is_done bundles; then skipped 7; else
       again git add "${dir}" || stop "git add failed for ${dir} in ${bundle}"
       rows="${rows}- **${dir:0:3}** - [${dir}](https://github.com/${ORG}/${dir})"$'\n'
     done
+    # Each workload is pinned to ${VERSION}. A "branch = main" line (bundles
+    # before 2026-10-19 have one) would let "git submodule update --remote"
+    # leave that pin, so none is kept.
+    while read -r key _; do
+      git config -f .gitmodules --unset "${key}" || stop "could not remove ${key} from .gitmodules in ${bundle}"
+    done < <(git config -f .gitmodules --get-regexp '^submodule\..*\.branch$' 2>/dev/null)
     # run.sh was folded into run_benchmark_suite.sh (--list, --show-output).
     git rm -q --ignore-unmatch run.sh >/dev/null 2>&1
     rm -f run.sh
     tr -d '\r' <"${SUITE_SCRIPT}" >run_benchmark_suite.sh
+    bundle_suite_script "${s}" <run_benchmark_suite.sh >run_benchmark_suite.sh.new &&
+      mv -f run_benchmark_suite.sh.new run_benchmark_suite.sh || stop "could not write run_benchmark_suite.sh in ${bundle}"
+    check_bundle_suite_script run_benchmark_suite.sh "${s}" ||
+      stop "the bundle copy of run_benchmark_suite.sh did not get its edits; the shared script in ${SUITE_SCRIPT} may have changed. Update bundle_suite_script() in this script."
     suite_files="run_benchmark_suite.sh"
     if [[ -f "${METRICS_SCRIPT}" ]]; then
       tr -d '\r' <"${METRICS_SCRIPT}" >show_metrics.sh
@@ -1120,6 +1227,12 @@ if is_done enduser-test; then skipped 8; else
       [[ ! -f "${WORK}/_test_clone/${f}" || -x "${WORK}/_test_clone/${f}" ]] || stop "${f} in the bundle is not executable"
     done
     [[ ! -e "${WORK}/_test_clone/run.sh" ]] || stop "the bundle still has run.sh; step 7 should have removed it"
+    ! grep -q 'branch *=' "${WORK}/_test_clone/.gitmodules" || stop "the bundle's .gitmodules still has a branch line"
+    (cd "${WORK}/_test_clone" && ./run_benchmark_suite.sh --help) | grep -q "Default: smoke   (full run" ||
+      stop "the bundle's run_benchmark_suite.sh does not default to the smoke profile"
+    for f in $(grep -o '\./[a-z_]*\.sh' "${WORK}/_test_clone/README.md" | sort -u); do
+      [[ -x "${WORK}/_test_clone/${f#./}" ]] || stop "the bundle README names ${f}, which is not in the bundle (or not executable)"
+    done
     listing=$(cd "${WORK}/_test_clone" && ./run_benchmark_suite.sh --list)
     got=$(printf '%s\n' "${listing}" | grep -c ' ready$')
     printf '%s\n' "${listing}" | head -n 3

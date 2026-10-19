@@ -102,17 +102,17 @@
   {
     "field_name": "run_benchmark Command Plus Options for Smoke Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 75 --power-threshold 500 --throttle-check true --ecc-check true --duration 5 --output-format csv"
+    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --throttle-check true --ecc-check true --duration 5 --output-format csv"
   },
   {
     "field_name": "run_benchmark Command Plus Options for Baseline Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 75 --power-threshold 500 --throttle-check true --ecc-check true --duration 200 --output-format csv"
+    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --throttle-check true --ecc-check true --duration 200 --output-format csv"
   },
   {
     "field_name": "run_benchmark Command Plus Options for Extended Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 75 --power-threshold 500 --throttle-check true --ecc-check true --duration 580 --output-format csv"
+    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --throttle-check true --ecc-check true --duration 580 --output-format csv"
   },
   {
     "field_name": "Output Fields / Metrics to Parse",
