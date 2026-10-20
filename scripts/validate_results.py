@@ -199,7 +199,7 @@ def main() -> int:
             resolved = resolve_metrics(items, metrics) if items else []
             pairs = [(label, value) for _number, _description, label, value in resolved]
             context = {
-                "profile": os.environ.get("BENCHMARK_PROFILE", ""),
+                "profile": os.environ.get("BENCHMARK_PROFILE", "") or str(payload.get("profile") or ""),
                 "status": payload.get("status", ""),
                 "standin": str(payload.get("status", "")).lower() in {"stub", "smoke-standin"},
                 "gpu_count": metrics.get("gpu_count", os.environ.get("GPU_COUNT", "")),

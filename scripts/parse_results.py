@@ -618,7 +618,13 @@ def main() -> int:
     conn.commit()
     conn.close()
     metrics_summary = build_metrics_summary(metric_cols, rows, aggregates)
-    summary = {"sample_count": len(rows), "status": status, "metrics": metrics_summary, "run_id": run_id}
+    summary = {
+        "sample_count": len(rows),
+        "status": status,
+        "metrics": metrics_summary,
+        "run_id": run_id,
+        "profile": os.environ.get("BENCHMARK_PROFILE", ""),
+    }
     Path(args.summary).parent.mkdir(parents=True, exist_ok=True)
     Path(args.summary).write_text(json.dumps(summary, indent=2) + "\n", encoding="utf-8")
     if args.run_dir:
