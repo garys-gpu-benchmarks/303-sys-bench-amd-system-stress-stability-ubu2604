@@ -42,8 +42,8 @@ git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-am
 Every line in `./run_benchmark_suite.sh --list` should show `ready`; it exits with an error if any workload is not fetched. The commands are joined with `&&`, so if the clone, the list or the smoke run fails, the chain stops there, and the closing message appears only when everything succeeded. The chain ends in `/opt/benchmarks`, where the suite runner is. For more extensive testing:
 
 ```bash
-./run_benchmark_suite.sh -p smoke                 # smoke test of all 32 workloads
-./run_benchmark_suite.sh -w 307 -p baseline       # workload 307, baseline profile
+./run_benchmark_suite.sh --smoke                  # smoke test of all 32 workloads
+./run_benchmark_suite.sh -w 307 --baseline        # workload 307, baseline profile
 ./run_benchmark_suite.sh --help                   # all options
 ```
 
@@ -66,8 +66,8 @@ Three operator scripts from [`garys-gpu-benchmarks/gpu-bench-suite`](https://git
   ```bash
   cd /opt/benchmarks
   ./run_benchmark_suite.sh --dry-run                    # list what would run
-  ./run_benchmark_suite.sh -w 303 -p smoke,baseline   # just this workload
-  ./run_benchmark_suite.sh -p smoke                     # every workload, smoke profile
+  ./run_benchmark_suite.sh -w 303 --smoke --baseline  # just this workload
+  ./run_benchmark_suite.sh --smoke                      # every workload, smoke profile
   ./run_benchmark_suite.sh -r 20                        # soak: everything, 20 times
   ```
 - **`get_remote_info.sh`** (on your laptop; Git Bash on Windows) — over one SSH connection, copies the runtime ledger and every workload's `results/raw`, `results/parsed` and suite logs into `RUNTIME_LEDGERS/` and `DIRECTORIES/`.
