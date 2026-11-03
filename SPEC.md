@@ -2,7 +2,7 @@
 
 ## Execution Description
 
-Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, throttle_check, ecc_check, duration.
+Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, duration.
 
 ## Parameters
 
@@ -13,10 +13,7 @@ Runs CPU-only stress-ng while polling amd-smi metric once per second. num_thread
 | gpu_load_percent | `--gpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | From Parameter list; see Execution Description With Parameters. |
 | temp_threshold | `--temp-threshold` | smoke=100, baseline=100, extended=100 | 100 | From Parameter list; see Execution Description With Parameters. |
 | power_threshold | `--power-threshold` | smoke=1000, baseline=1000, extended=1000 | 1000 | From Parameter list; see Execution Description With Parameters. |
-| throttle_check | `--throttle-check` | smoke=true, baseline=true, extended=true | true | From Parameter list; see Execution Description With Parameters. |
-| ecc_check | `--ecc-check` | smoke=true, baseline=true, extended=true | true | From Parameter list; see Execution Description With Parameters. |
 | duration | `--duration` | smoke=5, baseline=200, extended=580 | 200 | From Parameter list; see Execution Description With Parameters. |
-| output_format | `--output-format` | smoke=csv, baseline=csv, extended=csv | csv | From Parameter list; see Execution Description With Parameters. |
 
 ## Invocation
 

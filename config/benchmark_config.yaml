@@ -13,13 +13,10 @@ sweep:
   gpu_load_percent: 50
   temp_threshold: 100
   power_threshold: 1000
-  throttle_check: true
-  ecc_check: true
   duration:
     smoke: 5
     baseline: 200
     extended: 580
-  output_format: csv
 
 thresholds:
   peak_cpu_temp_c_min: 0
