@@ -17,6 +17,7 @@ sweep:
     smoke: 5
     baseline: 200
     extended: 580
+  poll_interval: 1
 
 thresholds:
   peak_cpu_temp_c_min: 0

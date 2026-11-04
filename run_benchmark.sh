@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # File: run_benchmark.sh
-# Description: Runs CPU-only stress-ng while polling amd-smi metric once per second.
+# Description: Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1).
 # Execution: bash run_benchmark.sh [--profile smoke|baseline|extended] [--validate]
 # Options: --profile, --smoke, --baseline, --extended, --device, --phase, --raw-file, --config, --validate, --help
 # Requirements: bash, python3, repository-local .venv
@@ -18,7 +18,7 @@ usage() {
   cat <<'USAGE'
 Usage: bash run_benchmark.sh [OPTIONS]
 
-Runs CPU-only stress-ng while polling amd-smi metric once per second.
+Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1).
 
 Profiles:
   --profile <name>              Run profile: smoke|baseline|extended (default: smoke)
@@ -51,6 +51,7 @@ Workload options:
   --temp-threshold <value>            Override temp_threshold
   --power-threshold <value>            Override power_threshold
   --duration <value>            Override duration
+  --poll-interval <value>            Override poll_interval
 
 Information:
   --specification               Print this workload's specification and exit
@@ -90,6 +91,7 @@ GPU_LOAD_PERCENT=""
 TEMP_THRESHOLD=""
 POWER_THRESHOLD=""
 DURATION=""
+POLL_INTERVAL=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -116,6 +118,7 @@ while [[ $# -gt 0 ]]; do
     --temp-threshold) TEMP_THRESHOLD="${2:-}"; shift 2 ;;
     --power-threshold) POWER_THRESHOLD="${2:-}"; shift 2 ;;
     --duration) DURATION="${2:-}"; shift 2 ;;
+    --poll-interval) POLL_INTERVAL="${2:-}"; shift 2 ;;
     --help|--specification|--matrix-definition) shift ;;
     *) die "Unknown option: $1" ;;
   esac
@@ -160,6 +163,7 @@ GPU_LOAD_PERCENT="${GPU_LOAD_PERCENT:-$(yaml_get gpu_load_percent)}"
 TEMP_THRESHOLD="${TEMP_THRESHOLD:-$(yaml_get temp_threshold)}"
 POWER_THRESHOLD="${POWER_THRESHOLD:-$(yaml_get power_threshold)}"
 DURATION="${DURATION:-$(yaml_get duration)}"
+POLL_INTERVAL="${POLL_INTERVAL:-$(yaml_get poll_interval)}"
 OUTPUT_FORMAT="${OUTPUT_FORMAT:-$(yaml_get output_format)}"
 OUTPUT_FORMAT="${OUTPUT_FORMAT:-csv}"
 
@@ -171,6 +175,7 @@ BENCHMARK_RUN_COMMAND="bash run_benchmark.sh --${PROFILE}"
 [[ -n "${TEMP_THRESHOLD}" ]] && BENCHMARK_RUN_COMMAND+=" --temp-threshold $(printf %q "${TEMP_THRESHOLD}")"
 [[ -n "${POWER_THRESHOLD}" ]] && BENCHMARK_RUN_COMMAND+=" --power-threshold $(printf %q "${POWER_THRESHOLD}")"
 [[ -n "${DURATION}" ]] && BENCHMARK_RUN_COMMAND+=" --duration $(printf %q "${DURATION}")"
+[[ -n "${POLL_INTERVAL}" ]] && BENCHMARK_RUN_COMMAND+=" --poll-interval $(printf %q "${POLL_INTERVAL}")"
 set_benchmark_run_command "${BENCHMARK_RUN_COMMAND}"
 
 HOSTNAME_VALUE="$(hostname -s 2>/dev/null || hostname)"
@@ -219,6 +224,7 @@ run_collection() {
   grep -q -- '--temp-threshold' <<<"${help}" && collect_args+=(--temp-threshold "${TEMP_THRESHOLD}")
   grep -q -- '--power-threshold' <<<"${help}" && collect_args+=(--power-threshold "${POWER_THRESHOLD}")
   grep -q -- '--duration' <<<"${help}" && collect_args+=(--duration "${DURATION}")
+  grep -q -- '--poll-interval' <<<"${help}" && collect_args+=(--poll-interval "${POLL_INTERVAL}")
 
   printf -v collect_cmd '%q ' "${PYTHON_BIN}" scripts/collect_workload.py "${collect_args[@]}"
   echo "[RUN] ${collect_cmd}"

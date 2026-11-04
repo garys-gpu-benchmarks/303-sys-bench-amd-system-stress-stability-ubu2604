@@ -25,6 +25,11 @@
     "value": "sys-bench-amd-system-stress-stability-ubu2604"
   },
   {
+    "field_name": "Repo Directory Name",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "303-sys-bench-amd-system-stress-stability-ubu2604"
+  },
+  {
     "field_name": "Main Goal",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "Analyze thermal and power samples under CPU stress-ng"
@@ -32,7 +37,7 @@
   {
     "field_name": "Validation Objective",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Validates per-second telemetry during yaml duration. GPU GEMM load is not applied"
+    "value": "Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied"
   },
   {
     "field_name": "Metrics",
@@ -47,17 +52,17 @@
   {
     "field_name": "Command Execution Details and Purpose",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Command Methodology",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs once per second. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Execution Description With Parameters",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Runs CPU-only stress-ng while polling amd-smi metric once per second. num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
+    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
   },
   {
     "field_name": "Execution Domain",
@@ -92,7 +97,7 @@
   {
     "field_name": "Primary Record Granularity",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "one CSV row per polling second during duration"
+    "value": "one CSV row per poll_interval during duration"
   },
   {
     "field_name": "Raw Output Example",
@@ -102,17 +107,17 @@
   {
     "field_name": "run_benchmark Command Plus Options for Smoke Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5"
+    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5 --poll-interval 1"
   },
   {
     "field_name": "run_benchmark Command Plus Options for Baseline Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 200"
+    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 200 --poll-interval 1"
   },
   {
     "field_name": "run_benchmark Command Plus Options for Extended Run",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580"
+    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580 --poll-interval 1"
   },
   {
     "field_name": "Output Fields / Metrics to Parse",
@@ -257,7 +262,7 @@
   {
     "field_name": "Parameter_07",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "-"
+    "value": "poll_interval"
   },
   {
     "field_name": "Parameter_08",
@@ -367,7 +372,7 @@
   {
     "field_name": "Installation and Execution Summary",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "Workload Command Line Executable",
@@ -387,7 +392,7 @@
   {
     "field_name": "Execution Summary (Run and Measure)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
   },
   {
     "field_name": "nVidia Porting Instructions (Reference Only)",
@@ -407,7 +412,7 @@
   {
     "field_name": "Profile Parameter Values",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Parameters_SmokeBaselineExtend",
-    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\", \"notes\": \"\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"temp_threshold\": {\"smoke\": \"100\", \"baseline\": \"100\", \"extended\": \"100\", \"notes\": \"\"}, \"power_threshold\": {\"smoke\": \"1000\", \"baseline\": \"1000\", \"extended\": \"1000\", \"notes\": \"\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\", \"notes\": \"VM 2026-08-16 duration=200 -> 205s (3:25). Extended 580 extrapolated ~9:50, not tested.\"}}"
+    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\", \"notes\": \"\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"temp_threshold\": {\"smoke\": \"100\", \"baseline\": \"100\", \"extended\": \"100\", \"notes\": \"\"}, \"power_threshold\": {\"smoke\": \"1000\", \"baseline\": \"1000\", \"extended\": \"1000\", \"notes\": \"\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\", \"notes\": \"VM 2026-08-16 duration=200 -> 205s (3:25). Extended 580 extrapolated ~9:50, not tested.\"}, \"poll_interval\": {\"smoke\": \"1\", \"baseline\": \"1\", \"extended\": \"1\", \"notes\": \"\"}}"
   },
   {
     "field_name": "Profile Command Authorship",

@@ -15,13 +15,13 @@ This PRD.md section is populated from benchmark_specification.json, which is the
 CPU + System Stress (Baseline Health)
 
 ## Execution Summary (Run and Measure)
-Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric each second, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
+Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
 
 ## Main Goal
 Analyze thermal and power samples under CPU stress-ng
 
 ## Validation Objective
-Validates per-second telemetry during yaml duration. GPU GEMM load is not applied
+Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied
 
 ## Workload Category
 System Validation & Reliability
