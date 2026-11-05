@@ -11,7 +11,7 @@ Target: Ubuntu 26.04 · AMD · see Hardware Requirements. This is a host benchma
 git clone https://github.com/garys-gpu-benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604.git
 cd 303-sys-bench-amd-system-stress-stability-ubu2604
 sudo bash setup.sh --assume-yes
-bash run_benchmark.sh --profile smoke --validate
+bash run_benchmark.sh --smoke --validate
 ```
 Results are written to `results/benchmark.db` and `results/summary.json`.
 
@@ -34,7 +34,7 @@ git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-am
   && cd /opt/benchmarks \
   && ./run_benchmark_suite.sh --list \
   && cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604 \
-  && bash run_benchmark.sh --profile smoke --validate \
+  && bash run_benchmark.sh --smoke --validate \
   && cd /opt/benchmarks \
   && echo "Done: 32 workloads in /opt/benchmarks; 303-sys-bench-amd-system-stress-stability-ubu2604 smoke run passed. Next: ./run_benchmark_suite.sh --help"
 ```

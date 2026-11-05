@@ -20,7 +20,7 @@
     "value": "Ubuntu 26.04"
   },
   {
-    "field_name": "Repo Name",
+    "field_name": "Repo Base Name",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "sys-bench-amd-system-stress-stability-ubu2604"
   },
@@ -35,199 +35,9 @@
     "value": "Analyze thermal and power samples under CPU stress-ng"
   },
   {
-    "field_name": "Validation Objective",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied"
-  },
-  {
     "field_name": "Metrics",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "#1: Peak GPU junction temperature (peak_gpu_junction_temp_c); #2: Sustained GPU power (sustained_gpu_power_w); #3: Uncorrectable ECC errors, RAS counter delta (ras_uncorrectable_ecc_delta_count); #4: Thermal throttle events (thermal_throttle_event_count)"
-  },
-  {
-    "field_name": "Command Tools Executed",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
-  },
-  {
-    "field_name": "Command Execution Details and Purpose",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
-  },
-  {
-    "field_name": "Command Methodology",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. No rocblas-bench GPU load is started"
-  },
-  {
-    "field_name": "Execution Description With Parameters",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
-  },
-  {
-    "field_name": "Execution Domain",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Validation / Correctness"
-  },
-  {
-    "field_name": "Workload Category",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "System Validation & Reliability"
-  },
-  {
-    "field_name": "Workload Type",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Test"
-  },
-  {
-    "field_name": "Target Hardware",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "CPU"
-  },
-  {
-    "field_name": "GPU Model",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "MI300X"
-  },
-  {
-    "field_name": "Raw Output Format",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "CSV with one time-series row per elapsed second"
-  },
-  {
-    "field_name": "Primary Record Granularity",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "one CSV row per poll_interval during duration"
-  },
-  {
-    "field_name": "Raw Output Example",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count\n0,0,0,45,75,0,45,75,0,0"
-  },
-  {
-    "field_name": "run_benchmark Command Plus Options for Smoke Run",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5 --poll-interval 1"
-  },
-  {
-    "field_name": "run_benchmark Command Plus Options for Baseline Run",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 200 --poll-interval 1"
-  },
-  {
-    "field_name": "run_benchmark Command Plus Options for Extended Run",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580 --poll-interval 1"
-  },
-  {
-    "field_name": "Output Fields / Metrics to Parse",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "gpu_util_pct, gpu_temp_c, gpu_power_w, ecc_uncorrected, peak_gpu_junction_temp_c, sustained_gpu_power_w, thermal_throttle_event_count, ras_uncorrectable_ecc_delta_count"
-  },
-  {
-    "field_name": "Success Criteria",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "One sample per elapsed second parses, and validation accepts the configured GPU temperature, power, throttle, and ECC gates"
-  },
-  {
-    "field_name": "Parser and Normalization Notes",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "The CSV has no CPU utilization or CPU temperature columns. ras_uncorrectable_ecc_delta_count is the uncorrectable delta from the last sample minus the first, copied onto every row. A RAS table that names the columns and yields no counts is na (RAS table not parsed). When amd-smi prints no throttle or violation counter, thermal_throttle_event_count is na (expected: throttle counter not exposed), which publishes as N/A-EXPECTED"
-  },
-  {
-    "field_name": "Hardware Config",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Digital Ocean VM (gpu-mi300x1-192gb,20 vCPUs, 240GB RAM, 720GB NVMe), 1xMI300X(192GB-HBM, gfx942, 304CUs)"
-  },
-  {
-    "field_name": "GPU Architecture",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "gfx942 (AMD MI300X)"
-  },
-  {
-    "field_name": "Framework",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Bash, SQLite, Python, PyYAML, stress-ng, amd-smi"
-  },
-  {
-    "field_name": "Kernel Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "kernel 7.0.0"
-  },
-  {
-    "field_name": "Runtime Language",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "C (stress-ng), Python (optional GPU matmul)"
-  },
-  {
-    "field_name": "Container Base Image",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - host-native Ubuntu 26.04"
-  },
-  {
-    "field_name": "Python Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only"
-  },
-  {
-    "field_name": "GPU Runtime Version (was ROCm Version)",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "ROCm 10.1.0"
-  },
-  {
-    "field_name": "BLAS Version (was rocBLAS version)",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "rocBLAS 5.7.0"
-  },
-  {
-    "field_name": "Mistral-7B Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - Mistral not used"
-  },
-  {
-    "field_name": "PyTorch Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - PyTorch not used"
-  },
-  {
-    "field_name": "torchvision Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - torchvision not used"
-  },
-  {
-    "field_name": "vLLM Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - vLLM not used"
-  },
-  {
-    "field_name": "vLLM Wheel/Source Index",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - vLLM not used"
-  },
-  {
-    "field_name": "SGLang Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - SGLang not used"
-  },
-  {
-    "field_name": "SGLang Repository/Commit",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - SGLang not used"
-  },
-  {
-    "field_name": "Cmake Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - CMake not used"
-  },
-  {
-    "field_name": "g++ Version",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "N/A - g++ not used"
-  },
-  {
-    "field_name": "Known Runtime Constraints (<=35 Words Each)",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Only the CPU is stressed when gpu_load_percent is 0, the default. A positive value starts a PyTorch matmul. Duration comes from yaml (5 / 200 / 580 s)"
   },
   {
     "field_name": "Parameter_01",
@@ -328,6 +138,196 @@
     "field_name": "Parameter_20",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "-"
+  },
+  {
+    "field_name": "run_benchmark Command Plus Options for Smoke Run (One minute or less)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5 --poll-interval 1"
+  },
+  {
+    "field_name": "run_benchmark Command Plus Options for Baseline Run (3 to 5 minutes)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "bash run_benchmark.sh --baseline --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 200 --poll-interval 1"
+  },
+  {
+    "field_name": "run_benchmark Command Plus Options for Extended Run (8 to 15 minutes)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580 --poll-interval 1"
+  },
+  {
+    "field_name": "Validation Objective",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied"
+  },
+  {
+    "field_name": "Command Tools Executed",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
+  },
+  {
+    "field_name": "Command Execution Details and Purpose",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+  },
+  {
+    "field_name": "Command Methodology",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. No rocblas-bench GPU load is started"
+  },
+  {
+    "field_name": "Execution Description With Parameters",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
+  },
+  {
+    "field_name": "Execution Domain",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Validation / Correctness"
+  },
+  {
+    "field_name": "Workload Category",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "System Validation & Reliability"
+  },
+  {
+    "field_name": "Workload Type",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Test"
+  },
+  {
+    "field_name": "Target Hardware",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "CPU"
+  },
+  {
+    "field_name": "GPU Model",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "MI300X"
+  },
+  {
+    "field_name": "Raw Output Format",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "CSV with one time-series row per elapsed second"
+  },
+  {
+    "field_name": "Primary Record Granularity",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "one CSV row per poll_interval during duration"
+  },
+  {
+    "field_name": "Raw Output Example",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu_junction_temp_c,sustained_gpu_power_w,thermal_throttle_event_count,ras_uncorrectable_ecc_delta_count\n0,0,0,45,75,0,45,75,0,0"
+  },
+  {
+    "field_name": "Output Fields / Metrics to Parse",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "gpu_util_pct, gpu_temp_c, gpu_power_w, ecc_uncorrected, peak_gpu_junction_temp_c, sustained_gpu_power_w, thermal_throttle_event_count, ras_uncorrectable_ecc_delta_count"
+  },
+  {
+    "field_name": "Success Criteria",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "One sample per elapsed second parses, and validation accepts the configured GPU temperature, power, throttle, and ECC gates"
+  },
+  {
+    "field_name": "Parser and Normalization Notes",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "The CSV has no CPU utilization or CPU temperature columns. ras_uncorrectable_ecc_delta_count is the uncorrectable delta from the last sample minus the first, copied onto every row. A RAS table that names the columns and yields no counts is na (RAS table not parsed). When amd-smi prints no throttle or violation counter, thermal_throttle_event_count is na (expected: throttle counter not exposed), which publishes as N/A-EXPECTED"
+  },
+  {
+    "field_name": "Hardware Config",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Digital Ocean VM (gpu-mi300x1-192gb,20 vCPUs, 240GB RAM, 720GB NVMe), 1xMI300X(192GB-HBM, gfx942, 304CUs)"
+  },
+  {
+    "field_name": "GPU Architecture",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "gfx942 (AMD MI300X)"
+  },
+  {
+    "field_name": "Framework",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Bash, SQLite, Python, PyYAML, stress-ng, amd-smi"
+  },
+  {
+    "field_name": "Kernel Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "kernel 7.0.0"
+  },
+  {
+    "field_name": "Runtime Language",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "C (stress-ng), Python (optional GPU matmul)"
+  },
+  {
+    "field_name": "Container Base Image",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "host-native Ubuntu 26.04"
+  },
+  {
+    "field_name": "Python Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only"
+  },
+  {
+    "field_name": "GPU Runtime Version (was ROCm Version)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "ROCm 10.1.0"
+  },
+  {
+    "field_name": "BLAS Version (was rocBLAS version)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "rocBLAS 5.7.0"
+  },
+  {
+    "field_name": "Mistral-7B Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - Mistral not used"
+  },
+  {
+    "field_name": "PyTorch Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - PyTorch not used"
+  },
+  {
+    "field_name": "torchvision Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - torchvision not used"
+  },
+  {
+    "field_name": "vLLM Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - vLLM not used"
+  },
+  {
+    "field_name": "vLLM Wheel/Source Index",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - vLLM not used"
+  },
+  {
+    "field_name": "SGLang Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - SGLang not used"
+  },
+  {
+    "field_name": "SGLang Repository/Commit",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - SGLang not used"
+  },
+  {
+    "field_name": "Cmake Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - CMake not used"
+  },
+  {
+    "field_name": "g++ Version",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "N/A - g++ not used"
+  },
+  {
+    "field_name": "Known Runtime Constraints (<=35 Words Each)",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Only the CPU is stressed when gpu_load_percent is 0, the default. A positive value starts a PyTorch matmul. Duration comes from yaml (5 / 200 / 580 s)"
   },
   {
     "field_name": "GPU Architecutre ID",
