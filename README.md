@@ -11,7 +11,7 @@ Target: Ubuntu 26.04 · AMD · see Hardware Requirements. This is a host benchma
 git clone https://github.com/garys-gpu-benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604.git
 cd 303-sys-bench-amd-system-stress-stability-ubu2604
 sudo bash setup.sh --assume-yes
-bash run_benchmark.sh --smoke --validate
+bash run_benchmark.sh --smoke
 ```
 Results are written to `results/benchmark.db` and `results/summary.json`.
 
@@ -34,7 +34,7 @@ git clone --recurse-submodules https://github.com/garys-gpu-benchmarks/bundle-am
   && cd /opt/benchmarks \
   && ./run_benchmark_suite.sh --list \
   && cd /opt/benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604 \
-  && bash run_benchmark.sh --smoke --validate \
+  && bash run_benchmark.sh --smoke \
   && cd /opt/benchmarks \
   && echo "Done: 32 workloads in /opt/benchmarks; 303-sys-bench-amd-system-stress-stability-ubu2604 smoke run passed. Next: ./run_benchmark_suite.sh --help"
 ```
@@ -228,7 +228,7 @@ Primary target is AMD ROCm. NVIDIA notes in this section are reference only and 
 | Workflow | Runs on | When | What it does |
 |---|---|---|---|
 | [CI](.github/workflows/ci.yml) | GitHub-hosted runner | every pull request, and every push to `main` | shellcheck, ruff, `bash -n`, `compileall`, `run_benchmark.sh --help`, specification schema, the results validator on a seeded fixture, required files, and actionlint. No GPU and no benchmark run. |
-| [GPU Smoke Benchmark](.github/workflows/gpu-smoke.yml) | self-hosted runner labeled `gpu`, `amd`, `ubu2604` | only when started by hand: **Actions → GPU Smoke Benchmark → Run workflow** (choose `smoke`, `baseline` or `extended`) | Verifies the pre-provisioned GPU stack, records `results/environment.json` (driver, runtime, kernel, GPU), runs the profile with `--validate`, shows headline metrics on the run page, and uploads the results. |
+| [GPU Smoke Benchmark](.github/workflows/gpu-smoke.yml) | self-hosted runner labeled `gpu`, `amd`, `ubu2604` | only when started by hand: **Actions → GPU Smoke Benchmark → Run workflow** (choose `smoke`, `baseline` or `extended`) | Verifies the pre-provisioned GPU stack, records `results/environment.json` (driver, runtime, kernel, GPU), runs the profile, shows headline metrics on the run page, and uploads the results. |
 
 Both files are short callers. The steps themselves live once, for every workload in the suite, in [`garys-gpu-benchmarks/shared-workflows`](https://github.com/garys-gpu-benchmarks/shared-workflows), pinned at `@v1`. The GPU workflow is never triggered by pull requests, so code from a fork cannot run on the GPU host.
 
