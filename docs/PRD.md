@@ -18,10 +18,10 @@ CPU + System Stress (Baseline Health)
 Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
 
 ## Main Goal
-Analyze thermal and power samples under CPU stress-ng
+Analyze thermal and power under CPU stress-ng and rocBLAS load
 
 ## Validation Objective
-Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied
+Validates temperature and power sampled while stress-ng and rocBLAS GEMM are running
 
 ## Workload Category
 System Validation & Reliability

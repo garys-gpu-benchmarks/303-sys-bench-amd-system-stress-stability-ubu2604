@@ -32,7 +32,7 @@
   {
     "field_name": "Main Goal",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Analyze thermal and power samples under CPU stress-ng"
+    "value": "Analyze thermal and power under CPU stress-ng and rocBLAS load"
   },
   {
     "field_name": "Metrics",
@@ -140,6 +140,16 @@
     "value": "-"
   },
   {
+    "field_name": "Validation Objective",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Validates temperature and power sampled while stress-ng and rocBLAS GEMM are running"
+  },
+  {
+    "field_name": "Command Tools Executed",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average"
+  },
+  {
     "field_name": "run_benchmark Command Plus Options for Smoke Run (One minute or less)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5 --poll-interval 1"
@@ -153,16 +163,6 @@
     "field_name": "run_benchmark Command Plus Options for Extended Run (8 to 15 minutes)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580 --poll-interval 1"
-  },
-  {
-    "field_name": "Validation Objective",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Validates telemetry sampled every poll_interval seconds during yaml duration. GPU GEMM load is not applied"
-  },
-  {
-    "field_name": "Command Tools Executed",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
   },
   {
     "field_name": "Command Execution Details and Purpose",
@@ -377,7 +377,7 @@
   {
     "field_name": "Workload Command Line Executable",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, amd-smi metric, and sysfs power1_average"
+    "value": "Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average"
   },
   {
     "field_name": "ROCm Version",
@@ -412,7 +412,7 @@
   {
     "field_name": "Profile Parameter Values",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Parameters_SmokeBaselineExtend",
-    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\", \"notes\": \"\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\", \"notes\": \"\"}, \"temp_threshold\": {\"smoke\": \"100\", \"baseline\": \"100\", \"extended\": \"100\", \"notes\": \"\"}, \"power_threshold\": {\"smoke\": \"1000\", \"baseline\": \"1000\", \"extended\": \"1000\", \"notes\": \"\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\", \"notes\": \"VM 2026-08-16 duration=200 -> 205s (3:25). Extended 580 extrapolated ~9:50, not tested.\"}, \"poll_interval\": {\"smoke\": \"1\", \"baseline\": \"1\", \"extended\": \"1\", \"notes\": \"\"}}"
+    "value": "{\"num_threads\": {\"smoke\": \"16\", \"baseline\": \"16\", \"extended\": \"16\"}, \"cpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\"}, \"gpu_load_percent\": {\"smoke\": \"50\", \"baseline\": \"50\", \"extended\": \"50\"}, \"temp_threshold\": {\"smoke\": \"100\", \"baseline\": \"100\", \"extended\": \"100\"}, \"power_threshold\": {\"smoke\": \"1000\", \"baseline\": \"1000\", \"extended\": \"1000\"}, \"duration\": {\"smoke\": \"5\", \"baseline\": \"200\", \"extended\": \"580\"}, \"poll_interval\": {\"smoke\": \"1\", \"baseline\": \"1\", \"extended\": \"1\"}}"
   },
   {
     "field_name": "Profile Command Authorship",

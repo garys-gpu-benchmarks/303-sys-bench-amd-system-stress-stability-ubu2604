@@ -19,7 +19,7 @@ Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds
 ## Invocation
 
 ```bash
-Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average
 ```
 
 ## Raw Output Format
@@ -47,7 +47,7 @@ Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <durat
 ## Platform Portability
 
 - **AMD (primary):** ```bash
-Run stress-ng --cpu, amd-smi metric, and sysfs power1_average
+Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average
 ```
 - **NVIDIA:** Primary target is AMD ROCm. NVIDIA notes in this section are reference only and are not the execution path.
 
