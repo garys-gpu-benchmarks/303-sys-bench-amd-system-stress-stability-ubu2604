@@ -35,7 +35,10 @@ Parameters (override the profile's value):
   --gpu-load-percent <value>    Shared workload parameter (smoke/baseline/extended: 50)
   --temp-threshold <value>      Shared workload parameter (smoke/baseline/extended: 100)
   --power-threshold <value>     Shared workload parameter (smoke/baseline/extended: 1000)
-  --duration <n>                Wall-clock or sampling duration (smoke 5, baseline 200, extended 580)
+  --duration <n>                Wall-clock or sampling duration
+                                  smoke:    5
+                                  baseline: 200
+                                  extended: 580
   --poll-interval <value>       Shared workload parameter (smoke/baseline/extended: 1)
 
 General options:
