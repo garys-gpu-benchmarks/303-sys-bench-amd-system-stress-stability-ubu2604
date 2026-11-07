@@ -35,6 +35,11 @@
     "value": "Analyze thermal and power under CPU stress-ng and rocBLAS load"
   },
   {
+    "field_name": "Command Tools Executed",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average"
+  },
+  {
     "field_name": "Metrics",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "#1: Peak GPU junction temperature (peak_gpu_junction_temp_c); #2: Sustained GPU power (sustained_gpu_power_w); #3: Uncorrectable ECC errors, RAS counter delta (ras_uncorrectable_ecc_delta_count); #4: Thermal throttle events (thermal_throttle_event_count)"
@@ -140,16 +145,6 @@
     "value": "-"
   },
   {
-    "field_name": "Validation Objective",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Validates temperature and power sampled while stress-ng and rocBLAS GEMM are running"
-  },
-  {
-    "field_name": "Command Tools Executed",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average"
-  },
-  {
     "field_name": "run_benchmark Command Plus Options for Smoke Run (One minute or less)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "bash run_benchmark.sh --smoke --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 5 --poll-interval 1"
@@ -163,6 +158,11 @@
     "field_name": "run_benchmark Command Plus Options for Extended Run (8 to 15 minutes)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "bash run_benchmark.sh --extended --validate --num-threads 16 --cpu-load-percent 50 --gpu-load-percent 50 --temp-threshold 100 --power-threshold 1000 --duration 580 --poll-interval 1"
+  },
+  {
+    "field_name": "Validation Objective",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Validates temperature and power sampled while stress-ng and rocBLAS GEMM are running"
   },
   {
     "field_name": "Command Execution Details and Purpose",

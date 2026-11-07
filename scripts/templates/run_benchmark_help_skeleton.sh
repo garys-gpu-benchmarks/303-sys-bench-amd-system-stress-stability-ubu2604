@@ -15,8 +15,8 @@
 #
 # Copy usage() and the early --help loop into generated run_benchmark.sh.
 # Do not source this file unchanged.
-# The generator replaces the lines between Usage and Profiles with the workbook
-# Workload Name, Main Goal, Validation Objective, and Command Tools Executed.
+# The generator starts the page with a blank line and replaces the lines between
+# Usage and Profiles with the workbook Workload Name, Main Goal, and Command Tools Executed.
 # Use default CLI profile smoke.
 # Immediately after sourcing common.sh, call
 # capture_benchmark_run_command_submitted "$@" so the ledger records argv as

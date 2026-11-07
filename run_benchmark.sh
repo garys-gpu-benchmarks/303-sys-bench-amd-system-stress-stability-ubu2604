@@ -16,12 +16,11 @@ capture_benchmark_run_command_submitted "$@"
 
 usage() {
   cat <<'USAGE'
+
 Usage: bash run_benchmark.sh [OPTIONS]
 
 Workload Name:          CPU + System Stress (Baseline Health).
 Main Goal:              Analyze thermal and power under CPU stress-ng and rocBLAS load.
-Validation Objective:   Validates temperature and power sampled while stress-ng and rocBLAS GEMM are
-                        running.
 Command Tools Executed: Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs
                         power1_average.
 
