@@ -205,14 +205,14 @@
     "value": "MI300X"
   },
   {
-    "field_name": "Raw Output Format",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "CSV with one time-series row per elapsed second"
-  },
-  {
     "field_name": "Primary Record Granularity",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "one CSV row per poll_interval during duration"
+  },
+  {
+    "field_name": "Raw Output Format",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "CSV with one time-series row per elapsed second"
   },
   {
     "field_name": "Raw Output Example",
@@ -225,14 +225,14 @@
     "value": "gpu_util_pct, gpu_temp_c, gpu_power_w, ecc_uncorrected, peak_gpu_junction_temp_c, sustained_gpu_power_w, thermal_throttle_event_count, ras_uncorrectable_ecc_delta_count"
   },
   {
-    "field_name": "Success Criteria",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "One sample per elapsed second parses, and validation accepts the configured GPU temperature, power, throttle, and ECC gates"
-  },
-  {
     "field_name": "Parser and Normalization Notes",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "The CSV has no CPU utilization or CPU temperature columns. ras_uncorrectable_ecc_delta_count is the uncorrectable delta from the last sample minus the first, copied onto every row. A RAS table that names the columns and yields no counts is na (RAS table not parsed). When amd-smi prints no throttle or violation counter, thermal_throttle_event_count is na (expected: throttle counter not exposed), which publishes as N/A-EXPECTED"
+  },
+  {
+    "field_name": "Success Criteria",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "One sample per elapsed second parses, and validation accepts the configured GPU temperature, power, throttle, and ECC gates"
   },
   {
     "field_name": "Hardware Config",

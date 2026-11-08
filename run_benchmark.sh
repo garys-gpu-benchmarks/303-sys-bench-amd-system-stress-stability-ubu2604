@@ -19,10 +19,9 @@ usage() {
 
 Usage: bash run_benchmark.sh [OPTIONS]
 
-Workload Name:          CPU + System Stress (Baseline Health).
-Main Goal:              Analyze thermal and power under CPU stress-ng and rocBLAS load.
-Command Tools Executed: Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs
-                        power1_average.
+Workload Name:          CPU + System Stress (Baseline Health)
+Main Goal:              Analyze thermal and power under CPU stress-ng and rocBLAS load
+Command Tools Executed: Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average
 
 Profiles (default: --smoke):
   --smoke                       Run smoke profile
