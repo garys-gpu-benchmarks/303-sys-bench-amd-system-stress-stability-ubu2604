@@ -101,6 +101,7 @@ Other platforms: [AMD 24.04](https://github.com/garys-gpu-benchmarks/bundle-amd-
 ├── setup.sh                      # installs dependencies and builds the benchmark
 ├── run_benchmark.sh              # runs one profile, parses, validates
 ├── show_metrics.sh               # prints this workload's ledger rows
+├── list_runs.sh                  # prints every run in the ledger
 ├── SPEC.md                       # engineering specification
 ├── benchmark_specification.json  # workload definition
 ├── config/                       # profile values and thresholds

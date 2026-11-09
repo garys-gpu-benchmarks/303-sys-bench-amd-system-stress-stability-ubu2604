@@ -16,7 +16,6 @@ capture_benchmark_run_command_submitted "$@"
 
 usage() {
   cat <<'USAGE'
-
 Usage: bash run_benchmark.sh [OPTIONS]
 
 Workload Name:          CPU + System Stress (Baseline Health)
