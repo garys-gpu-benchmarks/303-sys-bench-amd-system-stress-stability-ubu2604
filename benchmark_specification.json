@@ -270,12 +270,12 @@
     "value": "Python 3.14.8 (uv-managed CPython from `uv python install 3.14`; all benchmark venvs; same build as 24.04). System Python 3.14.4 retained for OS and setup scripts only"
   },
   {
-    "field_name": "GPU Runtime Version (was ROCm Version)",
+    "field_name": "GPU Runtime Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "ROCm 10.1.0"
   },
   {
-    "field_name": "BLAS Version (was rocBLAS version)",
+    "field_name": "BLAS Version",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "rocBLAS 5.7.0"
   },
