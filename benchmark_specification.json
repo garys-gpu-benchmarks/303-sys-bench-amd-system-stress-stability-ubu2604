@@ -40,6 +40,11 @@
     "value": "Run stress-ng --cpu, rocblas-bench, amd-smi metric, and sysfs power1_average"
   },
   {
+    "field_name": "Execution Description With Parameters",
+    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
+    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
+  },
+  {
     "field_name": "Metrics",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "#1: Peak GPU junction temperature (peak_gpu_junction_temp_c); #2: Sustained GPU power (sustained_gpu_power_w); #3: Uncorrectable ECC errors, RAS counter delta (ras_uncorrectable_ecc_delta_count); #4: Thermal throttle events (thermal_throttle_event_count)"
@@ -173,11 +178,6 @@
     "field_name": "Command Methodology",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
     "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. No rocblas-bench GPU load is started"
-  },
-  {
-    "field_name": "Execution Description With Parameters",
-    "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
   },
   {
     "field_name": "Execution Domain",
