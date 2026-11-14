@@ -494,6 +494,7 @@ finish_benchmark_run() {
   set +E
   BENCHMARK_LEDGER_WRITTEN=1
   BENCHMARK_RUN_ACTIVE=0
+  echo  # blank line between the run's output and the next shell prompt
 }
 
 append_runtime_ledger_on_error() {
@@ -546,6 +547,7 @@ append_runtime_ledger_on_error() {
 die() {
   log_error "$*"
   append_runtime_ledger_on_error "$*" || true
+  echo  # blank line between the run's output and the next shell prompt
   exit 1
 }
 

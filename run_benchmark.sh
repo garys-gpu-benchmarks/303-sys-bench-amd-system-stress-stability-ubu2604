@@ -218,6 +218,7 @@ ELAPSED="$((STOP_EPOCH - START_EPOCH))"
 (( ELAPSED < 0 )) && ELAPSED=0
 if [[ "${QUIET}" -eq 0 ]]; then
   bash scripts/print_run_metadata.sh "${REPO_ROOT}" || true
+  echo  # blank line before the summary
   echo "[INFO] ===== Benchmark Summary ====="
   echo "[INFO] Run ID: $(basename "${RUN_DIR}") | Status: ok | Samples: $(${PYTHON_BIN} -c 'import json; print(json.load(open("results/summary.json"))["sample_count"])') | Profile: ${PROFILE} | Device: $(display_device)"
   print_benchmark_summary_commands

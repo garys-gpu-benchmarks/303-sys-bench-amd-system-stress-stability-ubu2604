@@ -1224,6 +1224,7 @@ def main() -> int:
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
         except ImportError:
             pass
+    print()  # blank line before the ledger/results lines
     print(f"Runtime entry added to {args.ledger}.")
     # results/RESULTS_ACTUAL.md: the latest run of each profile, readable (TEMPLATE_00_135).
     # The ledger row is the record; a failure here only warns.

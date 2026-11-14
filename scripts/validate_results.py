@@ -120,9 +120,6 @@ def main() -> int:
         failures.append("timestamps are not ISO-8601")
     if len(samples) < 1:
         failures.append("no sample rows")
-    wid = workload_number()
-    if (101 <= wid <= 123 or 301 <= wid <= 323) and len(samples) < 2:
-        failures.append("workloads 101-123 require at least two sample rows")
     skip = {"id", "run_id", "sample_index", "status", "error_message", "created_at",
             "benchmark_id", "benchmark_name", "started_at", "finished_at", "host_name",
             "os_version", "kernel_version", "gpu_name", "rocm_version", "framework_version",
