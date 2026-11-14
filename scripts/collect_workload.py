@@ -49,7 +49,6 @@ def write_csv(path, header, rows):
     text = buf.getvalue()
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     Path(path).write_text(text, encoding="utf-8")
-    print(text, end="")
     return text
 
 
