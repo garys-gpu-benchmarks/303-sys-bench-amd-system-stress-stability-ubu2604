@@ -99,7 +99,6 @@ Other platforms: [AMD 24.04](https://github.com/garys-gpu-benchmarks/bundle-amd-
 ```text
 .
 ├── run_setup.sh                  # installs dependencies and builds the benchmark
-├── setup.sh                      # runs run_setup.sh (its earlier name)
 ├── run_benchmark.sh              # runs one profile, parses, validates
 ├── show_metrics.sh               # prints this workload's ledger rows
 ├── list_runs.sh                  # prints every run in the ledger
