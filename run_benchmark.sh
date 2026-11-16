@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # File: run_benchmark.sh
-# Description: Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1).
+# Description: Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1).
 # Execution: bash run_benchmark.sh [--smoke|--baseline|--extended]
 # Options: --smoke, --baseline, --extended, --config, --help
 # Requirements: bash, python3, repository-local .venv
@@ -41,6 +41,7 @@ Parameters (override the profile's value):
 
 General options:
   --config <file>               Config file (default: config/benchmark_config.yaml)
+  --repeat <n>                  Run the selected profiles n times, in order (default: 1)
   --quiet                       Suppress nonessential stdout
   --log-level <level>           ERROR|WARN|INFO|DEBUG (default: INFO; DEBUG also prints [RUN] commands)
   --specification               Print this workload's specification and exit
@@ -105,7 +106,7 @@ begin_benchmark_run "${PROFILE}"
 bash scripts/ensure_setup.sh
 mark_benchmark_measure_start
 PYTHON_BIN="${REPO_ROOT}/.venv/bin/python"
-[[ -x "${PYTHON_BIN}" ]] || die "Missing ${PYTHON_BIN}; run bash setup.sh --assume-yes first."
+[[ -x "${PYTHON_BIN}" ]] || die "Missing ${PYTHON_BIN}; run bash run_setup.sh --assume-yes first."
 
 yaml_get() {
   "${PYTHON_BIN}" - "${CONFIG_FILE}" "${PROFILE}" "$1" <<'PY'

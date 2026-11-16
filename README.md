@@ -12,7 +12,7 @@ On an Ubuntu 26.04 host, as root or with sudo:
 ```bash
 git clone https://github.com/garys-gpu-benchmarks/303-sys-bench-amd-system-stress-stability-ubu2604.git
 cd 303-sys-bench-amd-system-stress-stability-ubu2604
-sudo bash setup.sh --assume-yes
+sudo bash run_setup.sh --assume-yes
 bash run_benchmark.sh --smoke
 ```
 
@@ -52,7 +52,7 @@ Profile values live in `config/benchmark_config.yaml`.
 
 - The smoke profile is a quick check with reduced sizes and iteration counts. Use `--baseline` or `--extended` for representative numbers.
 - Only the CPU is stressed when gpu_load_percent is 0, the default.
-- A positive value starts a PyTorch matmul.
+- The AMD load runs at full utilization, not the requested gpu_load_percent: requested 50%, delivered ~100%.
 - Duration comes from yaml (5 / 200 / 580 s).
 
 ## Output
@@ -68,9 +68,9 @@ Every run is checked for completeness and against any `thresholds:` or `baseline
 
 ## Requirements
 
-- Ubuntu 26.04, root or sudo for `setup.sh`
+- Ubuntu 26.04, root or sudo for `run_setup.sh`
 - AMD GPU with ROCm 10.1.0 (validated on MI300X)
-- stress-ng, amd-smi, Python 3.14 (uv-managed). `setup.sh` installs what is missing; Python packages go into a repo-local `.venv`.
+- stress-ng, amd-smi, Python 3.14 (uv-managed). `run_setup.sh` installs what is missing; Python packages go into a repo-local `.venv`.
 
 ## Run the Whole Bundle
 
@@ -90,15 +90,16 @@ Other platforms: [AMD 24.04](https://github.com/garys-gpu-benchmarks/bundle-amd-
 
 ## Troubleshooting
 
-- **The SSH session closed during setup:** the first AMD workload on a fresh host may reboot once to load the AMD GPU driver. Setup prints a 30-second warning first and resumes by itself after boot. SSH back in and run `tail -f results/reboot_resume.log`; when it prints `SETUP COMPLETE`, run your command again. Do not start `setup.sh` again while it is resuming.
-- **SSH dropped for another reason:** reconnect and run `sudo bash setup.sh --assume-yes` again. It resumes; do not delete `.venv` or `.cache`.
+- **The SSH session closed during setup:** the first AMD workload on a fresh host may reboot once to load the AMD GPU driver. Setup prints a 30-second warning first and resumes by itself after boot. SSH back in and run `tail -f results/reboot_resume.log`; when it prints `SETUP COMPLETE`, run your command again. Do not start `run_setup.sh` again while it is resuming.
+- **SSH dropped for another reason:** reconnect and run `sudo bash run_setup.sh --assume-yes` again. It resumes; do not delete `.venv` or `.cache`.
 - **A metric reads `na`:** the run could not measure it on this host. The reason is in the run's `metrics_summary.txt` and `errors_info.txt`; see also [Notes](#notes).
 
 ## Repository Layout
 
 ```text
 .
-├── setup.sh                      # installs dependencies and builds the benchmark
+├── run_setup.sh                  # installs dependencies and builds the benchmark
+├── setup.sh                      # runs run_setup.sh (its earlier name)
 ├── run_benchmark.sh              # runs one profile, parses, validates
 ├── show_metrics.sh               # prints this workload's ledger rows
 ├── list_runs.sh                  # prints every run in the ledger

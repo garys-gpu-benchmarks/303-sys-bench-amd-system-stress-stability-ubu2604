@@ -42,7 +42,7 @@
   {
     "field_name": "Execution Description With Parameters",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent, temp_threshold, power_threshold, throttle_check, and ecc_check are yaml fields and are ignored; no rocblas-bench or GPU GEMM load is started"
+    "value": "Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. gpu_load_percent: recorded, not a duty cycle"
   },
   {
     "field_name": "Metrics",
@@ -172,12 +172,12 @@
   {
     "field_name": "Command Execution Details and Purpose",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while one rocblas-bench FP32 GEMM holds the GPU at full utilization and amd-smi metric is polled every poll_interval seconds. --gpu-load-percent is recorded and is not a duty cycle: requested 50%, delivered ~100%"
   },
   {
     "field_name": "Command Methodology",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu for yaml duration and cpu_load_percent, and sample GPU utilization, temperature, and power from amd-smi metric and sysfs every poll_interval seconds. One rocblas-bench FP32 GEMM holds the GPU at full utilization: requested 50%, delivered ~100%"
   },
   {
     "field_name": "Execution Domain",
@@ -327,7 +327,7 @@
   {
     "field_name": "Known Runtime Constraints (<=35 Words Each)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Only the CPU is stressed when gpu_load_percent is 0, the default. A positive value starts a PyTorch matmul. Duration comes from yaml (5 / 200 / 580 s)"
+    "value": "Only the CPU is stressed when gpu_load_percent is 0, the default. The AMD load runs at full utilization, not the requested gpu_load_percent: requested 50%, delivered ~100%. Duration comes from yaml (5 / 200 / 580 s)"
   },
   {
     "field_name": "GPU Architecutre ID",
@@ -372,7 +372,7 @@
   {
     "field_name": "Installation and Execution Summary",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while one rocblas-bench FP32 GEMM holds the GPU at full utilization and amd-smi metric is polled every poll_interval seconds. --gpu-load-percent is recorded and is not a duty cycle: requested 50%, delivered ~100%"
   },
   {
     "field_name": "Workload Command Line Executable",
@@ -392,7 +392,7 @@
   {
     "field_name": "Execution Summary (Run and Measure)",
     "source_file": "BenchmarkSpecDefinitions.xlsx::Workload_Definitions",
-    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started"
+    "value": "Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while one rocblas-bench FP32 GEMM holds the GPU at full utilization and amd-smi metric is polled every poll_interval seconds. --gpu-load-percent is recorded and is not a duty cycle: requested 50%, delivered ~100%"
   },
   {
     "field_name": "nVidia Porting Instructions (Reference Only)",

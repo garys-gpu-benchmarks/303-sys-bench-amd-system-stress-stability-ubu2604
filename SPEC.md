@@ -2,7 +2,7 @@
 
 ## Execution Description
 
-Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, duration, poll_interval.
+Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50). duration: smoke 5 / baseline 200 / extended 580 s. Sweep dimensions: num_threads, cpu_load_percent, gpu_load_percent, temp_threshold, power_threshold, duration, poll_interval.
 
 ## Parameters
 
@@ -10,7 +10,7 @@ Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds
 | --- | --- | --- | --- | --- |
 | num_threads | `--num-threads` | smoke=16, baseline=16, extended=16 | 16 | From Parameter list; see Execution Description With Parameters. |
 | cpu_load_percent | `--cpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | From Parameter list; see Execution Description With Parameters. |
-| gpu_load_percent | `--gpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | From Parameter list; see Execution Description With Parameters. |
+| gpu_load_percent | `--gpu-load-percent` | smoke=50, baseline=50, extended=50 | 50 | Recorded, not a duty cycle. The AMD load is one rocblas-bench hot loop at full GPU utilization: requested 50%, delivered ~100%. |
 | temp_threshold | `--temp-threshold` | smoke=100, baseline=100, extended=100 | 100 | From Parameter list; see Execution Description With Parameters. |
 | power_threshold | `--power-threshold` | smoke=1000, baseline=1000, extended=1000 | 1000 | From Parameter list; see Execution Description With Parameters. |
 | duration | `--duration` | smoke=5, baseline=200, extended=580 | 200 | From Parameter list; see Execution Description With Parameters. |
@@ -38,11 +38,11 @@ sample_index,second,gpu_util_pct,gpu_temp_c,gpu_power_w,ecc_uncorrected,peak_gpu
 
 ## Framework
 
-Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 
 ## Installation and Execution Summary
 
-Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while polling amd-smi metric every poll_interval seconds, to measure peak CPU/GPU temperature and GPU power over the wall-clock window. No rocblas-bench GPU load is started
+Run stress-ng --cpu <num_threads> --cpu-load <cpu_load_percent> --timeout <duration>s while one rocblas-bench FP32 GEMM holds the GPU at full utilization and amd-smi metric is polled every poll_interval seconds. --gpu-load-percent is recorded and is not a duty cycle: requested 50%, delivered ~100%
 
 ## Platform Portability
 
@@ -98,10 +98,10 @@ bash run_benchmark.sh --extended
 2. `run.error_message` is NULL.
 3. `started_at` and `finished_at` are valid ISO-8601 UTC strings.
 4. All required aggregate metrics in `runs` are non-NULL and finite.
-5. All required aggregate metrics are physically sensible (positive values). Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+5. All required aggregate metrics are physically sensible (positive values). Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 6. At least 2 sample rows exist for the latest `run_id` (sweep coverage).
 7. No sample has `status = 'error'`.
-8. Runs CPU-only stress-ng while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
+8. Runs stress-ng and one rocblas-bench FP32 GEMM at full GPU utilization (requested 50%, delivered ~100%) while polling amd-smi metric every poll_interval seconds (default 1). num_threads: stress-ng --cpu workers (16). cpu_load_percent: stress-ng --cpu-load (50).
 
 ### Baseline / Threshold configuration (`config/benchmark_config.yaml`)
 
